@@ -7,7 +7,7 @@ default:
 
 build:
     @cmake -B build -S .
-    @cmake --build build --parallel 4
+    @cmake --build build --parallel 8
 
 test target: build
     {{cmd}} {{target}}
