@@ -26,6 +26,11 @@ inline void printProgress(float percentage) {
 }
 
 int main(int argc, char **argv) {
+    if (argc < 2) {
+        std::cout << "Usage: ./Moer <sceneDir>\n";
+        return 0;
+    }
+
     const std::string sceneDir = std::string(argv[1]);
     FileUtil::setWorkingDirectory(sceneDir);
     std::string sceneJsonPath = FileUtil::getFullPath("scene.json");
@@ -40,11 +45,11 @@ int main(int argc, char **argv) {
 
     auto start = std::chrono::system_clock::now();
 
-#pragma omp parallel for
+    // #pragma omp parallel for
     for (int y = 0; y < height; ++y) {
         for (int x = 0; x < width; ++x) {
             Vector2f NDC{(float)x / width, (float)y / height};
-            Spectrum li(.0f);
+            Spectrum li{.0f};
             for (int i = 0; i < spp; ++i) {
                 Ray ray = camera->sampleRayDifferentials(
                     CameraSample{sampler->next2D()}, NDC);
@@ -58,6 +63,7 @@ int main(int argc, char **argv) {
             }
         }
     }
+
     printProgress(1.f);
 
     auto end = std::chrono::system_clock::now();

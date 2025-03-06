@@ -7,8 +7,8 @@ class Film {
 public:
   Film() = delete;
 
-  Film(const Json &json) {
-    size = fetchRequired<Vector2i>(json, "size");
+  explicit Film(const Json &json):
+    size(fetchRequired<Vector2i>(json, "size")) {
     image = std::make_shared<Image>(size);
   }
 

@@ -1,6 +1,7 @@
 #pragma once
 #include <functional>
 #include <vector>
+#include <algorithm>
 
 template <typename T> class Distribution {
 public:

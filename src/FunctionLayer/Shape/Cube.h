@@ -2,24 +2,23 @@
 #include "Shape.h"
 
 class Cube : public Shape {
-public:
-  Cube() = delete;
+  public:
+    Cube() = delete;
 
-  Cube(const Json &json);
+    explicit Cube(const Json &json);
 
-  virtual bool rayIntersectShape(Ray &ray, int *primID, float *u,
-                                 float *v) const override;
+    virtual bool rayIntersectShape(Ray &ray, int *primID, float *u,
+                                   float *v) const override;
 
-  virtual void fillIntersection(float distance, int primID, float u, float v,
-                                Intersection *intersection) const override;
+    virtual void fillIntersection(float distance, int primID, float u, float v,
+                                  Intersection *intersection) const override;
 
-  virtual void uniformSampleOnSurface(Vector2f sample,
-                                      Intersection *intersection,
-                                      float *pdf) const override {
-    // TODO finish this
-    return;
-  }
+    virtual void uniformSampleOnSurface(Vector2f sample,
+                                        Intersection *intersection,
+                                        float *pdf) const override {
+        // TODO: finish this
+    }
 
-protected:
-  Point3f boxMin, boxMax;
+  protected:
+    Point3f boxMin, boxMax;
 };

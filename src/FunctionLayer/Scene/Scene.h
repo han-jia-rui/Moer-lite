@@ -4,23 +4,23 @@
 #include <FunctionLayer/Light/Light.h>
 #include <ResourceLayer/JsonUtil.h>
 class Scene {
-public:
-  Scene() = delete;
+  public:
+    Scene() = delete;
 
-  Scene(const Json &json);
+    explicit Scene(const Json &json);
 
-  ~Scene() = default;
+    ~Scene() = default;
 
-  std::optional<Intersection> rayIntersect(Ray &ray) const;
+    std::optional<Intersection> rayIntersect(Ray &ray) const;
 
-  std::shared_ptr<Light> sampleLight(float sample, float *pdf) const;
+    std::shared_ptr<Light> sampleLight(float sample, float *pdf) const;
 
-  float pdf(std::shared_ptr<Light> light) const;
+    float pdf(std::shared_ptr<Light> light) const;
 
-  std::vector<std::shared_ptr<InfiniteLight>> infiniteLights;
+    std::vector<std::shared_ptr<InfiniteLight>> infiniteLights;
 
-private:
-  std::shared_ptr<Acceleration> acceleration;
+  private:
+    std::shared_ptr<Acceleration> acceleration;
 
-  Distribution<std::shared_ptr<Light>> lightDistribution;
+    Distribution<std::shared_ptr<Light>> lightDistribution;
 };

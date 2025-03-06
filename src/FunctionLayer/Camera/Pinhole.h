@@ -5,7 +5,7 @@ class PinholeCamera : public PerspectiveCamera {
 public:
   PinholeCamera() = delete;
 
-  PinholeCamera(const Json &json);
+  explicit PinholeCamera(const Json &json);
 
   virtual Ray sampleRay(const CameraSample &sample,
                         Vector2f NDC) const override;
