@@ -11,14 +11,14 @@ bool Cone::rayIntersectShape(Ray &ray, int *primID, float *u, float *v) const {
     return false;
 }
 
-void Cone::fillIntersection(float distance, int primID, float u, float v, Intersection *intersection) const {
+void Cone::fillIntersection(float distance, int primID, float u, float v,
+                            Intersection *intersection) const {
     /// ----------------------------------------------------
     //* todo 填充圆锥相交信息中的法线以及相交位置信息
     //* 1.法线可以先计算出局部空间的法线，然后变换到世界空间
     //* 2.位置信息可以根据uv计算出，同样需要变换
     //* Write your code here.
     /// ----------------------------------------------------
-
 
     intersection->shape = this;
     intersection->distance = distance;
@@ -34,20 +34,20 @@ void Cone::fillIntersection(float distance, int primID, float u, float v, Inters
     intersection->bitangent = bitangent;
 }
 
-void Cone::uniformSampleOnSurface(Vector2f sample, Intersection *result, float *pdf) const {
-
-}
+void Cone::uniformSampleOnSurface(Vector2f sample, Intersection *result,
+                                  float *pdf) const {}
 
 Cone::Cone(const Json &json) : Shape(json) {
     radius = fetchOptional(json, "radius", 1.f);
     height = fetchOptional(json, "height", 1.f);
     phiMax = fetchOptional(json, "phi_max", 2 * PI);
     float tanTheta = radius / height;
-    cosTheta = sqrt(1/(1+tanTheta * tanTheta));
-    //theta = fetchOptional(json,)
-    AABB localAABB = AABB(Point3f(-radius,-radius,0),Point3f(radius,radius,height));
+    cosTheta = sqrt(1 / (1 + tanTheta * tanTheta));
+    // theta = fetchOptional(json,)
+    AABB localAABB =
+        AABB(Point3f(-radius, -radius, 0), Point3f(radius, radius, height));
     boundingBox = transform.toWorld(localAABB);
-    boundingBox = AABB(Point3f(-100,-100,-100),Point3f(100,100,100));
+    boundingBox = AABB(Point3f(-100, -100, -100), Point3f(100, 100, 100));
 }
 
 REGISTER_CLASS(Cone, "cone")

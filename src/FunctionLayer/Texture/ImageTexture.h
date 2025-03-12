@@ -5,15 +5,15 @@
 #include <CoreLayer/ColorSpace/Spectrum.h>
 #include <ResourceLayer/Image.h>
 class ImageTexture : public Texture<Spectrum> {
-public:
-  ImageTexture() = delete;
+  public:
+    ImageTexture() = delete;
 
-  ImageTexture(const Json &json);
+    ImageTexture(const Json &json);
 
-  virtual Spectrum evaluate(const Intersection &intersection) const override;
+    virtual Spectrum evaluate(const Intersection &intersection) const override;
 
-  virtual Spectrum evaluate(const TextureCoord &texCoord) const override;
+    virtual Spectrum evaluate(const TextureCoord &texCoord) const override;
 
-private:
-  std::shared_ptr<MipMap> mipmap;
+  private:
+    std::shared_ptr<MipMap> mipmap;
 };

@@ -11,3 +11,6 @@ build:
 
 test target: build
     {{cmd}} {{target}}
+
+clean:
+   @rm -rf ./build ./target 

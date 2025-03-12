@@ -2,14 +2,14 @@
 #include "Material.h"
 
 class MatteMaterial : public Material {
-public:
-  MatteMaterial();
+  public:
+    MatteMaterial();
 
-  MatteMaterial(const Json &json);
+    MatteMaterial(const Json &json);
 
-  virtual std::shared_ptr<BSDF>
-  computeBSDF(const Intersection &intersection) const override;
+    virtual std::shared_ptr<BSDF>
+    computeBSDF(const Intersection &intersection) const override;
 
-private:
-  std::shared_ptr<Texture<Spectrum>> albedo;
+  private:
+    std::shared_ptr<Texture<Spectrum>> albedo;
 };
