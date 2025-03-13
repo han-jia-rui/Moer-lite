@@ -14,7 +14,7 @@ class Acceleration {
 
     virtual ~Acceleration() = default;
 
-    static void setAccelerationType(std::string type);
+    static void setAccelerationType(const std::string &type);
 
     static std::shared_ptr<Acceleration> createAcceleration();
 

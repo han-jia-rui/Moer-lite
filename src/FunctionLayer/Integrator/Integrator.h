@@ -11,7 +11,7 @@ class Integrator {
 
     virtual ~Integrator() = default;
 
-    Integrator(const Json &json) {}
+    Integrator(const Json &) {}
 
     virtual Spectrum li(Ray &ray, const Scene &scene,
                         std::shared_ptr<Sampler> sampler) const = 0;

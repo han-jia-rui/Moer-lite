@@ -16,7 +16,7 @@ PerspectiveCamera::PerspectiveCamera(const Json &json) : Camera(json) {
             lookAt = fetchRequired<Point3f>(json["transform"], "lookAt");
     Vector3f up = fetchRequired<Vector3f>(json["transform"], "up");
     verticalFov = fetchRequired<float>(json, "verticalFov") / 180 * PI,
-    aspectRatio = (float)this->film->size[0] / this->film->size[1];
+    aspectRatio = (float)film->size[0] / film->size[1];
 
     //* 计算
     Vector3f forward = normalize(lookAt - position),
