@@ -19,13 +19,13 @@ struct Intersection {
     Vector3f dpdx, dpdy;
 };
 
-inline void computeRayDifferentials(Intersection *intersection,
+inline void computeRayDifferentials(Intersection &intersection,
                                     const Ray &ray) {
     // 计算光线微分
     do {
         if (ray.hasDifferentials) {
-            Point3f p = intersection->position;
-            Vector3f n = intersection->normal;
+            Point3f p = intersection.position;
+            Vector3f n = intersection.normal;
             Vector3f ox =
                 Vector3f{ray.originX[0], ray.originX[1], ray.originX[2]};
             Vector3f oy =
@@ -40,8 +40,8 @@ inline void computeRayDifferentials(Intersection *intersection,
 
             Point3f px = ray.origin + tx * ray.directionX;
             Point3f py = ray.origin + ty * ray.directionY;
-            intersection->dpdx = px - p;
-            intersection->dpdy = py - p;
+            intersection.dpdx = px - p;
+            intersection.dpdy = py - p;
 
             int dim[2];
             if (std::abs(n[0]) > std::abs(n[1]) &&
@@ -56,10 +56,10 @@ inline void computeRayDifferentials(Intersection *intersection,
                 dim[1] = 1;
             }
 
-            Vector3f dpdu = intersection->dpdu;
-            Vector3f dpdv = intersection->dpdv;
-            Vector3f dpdx = intersection->dpdx;
-            Vector3f dpdy = intersection->dpdy;
+            Vector3f dpdu = intersection.dpdu;
+            Vector3f dpdv = intersection.dpdv;
+            Vector3f dpdx = intersection.dpdx;
+            Vector3f dpdy = intersection.dpdy;
             float A[2][2] = {{dpdu[dim[0]], dpdv[dim[0]]},
                              {dpdu[dim[1]], dpdv[dim[1]]}};
             float Bx[2] = {dpdx[dim[0]], dpdx[dim[1]]};
@@ -84,10 +84,10 @@ inline void computeRayDifferentials(Intersection *intersection,
             if (!solveLinearSystem2x2(A, Bx, &dudy, &dvdy))
                 dudy = dvdy = .0f;
 
-            intersection->dudx = dudx;
-            intersection->dudy = dudy;
-            intersection->dvdx = dvdx;
-            intersection->dvdy = dvdy;
+            intersection.dudx = dudx;
+            intersection.dudy = dudy;
+            intersection.dvdx = dvdx;
+            intersection.dvdy = dvdy;
 
             return;
         }
@@ -95,10 +95,10 @@ inline void computeRayDifferentials(Intersection *intersection,
     } while (0);
 
     // 处理特殊情况
-    intersection->dudx = .0f;
-    intersection->dudy = .0f;
-    intersection->dvdx = .0f;
-    intersection->dvdy = .0f;
-    intersection->dpdx = Vector3f(.0f);
-    intersection->dpdy = Vector3f(.0f);
+    intersection.dudx = .0f;
+    intersection.dudy = .0f;
+    intersection.dvdx = .0f;
+    intersection.dvdy = .0f;
+    intersection.dpdx = Vector3f(.0f);
+    intersection.dpdy = Vector3f(.0f);
 }

@@ -19,7 +19,7 @@ Spectrum WhittedIntegrator::li(Ray &ray, const Scene &scene,
         if (auto light = its.shape->light; light) {
             spectrum += beta * light->evaluateEmission(its, -ray.direction);
         }
-        computeRayDifferentials(&its, ray);
+        computeRayDifferentials(its, ray);
         auto bsdf = its.shape->material->computeBSDF(its);
 
         auto bsdfSampleResult = bsdf->sample(-ray.direction, sampler->next2D());

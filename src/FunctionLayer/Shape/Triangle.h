@@ -3,32 +3,39 @@
 #include <FunctionLayer/Acceleration/Acceleration.h>
 #include <ResourceLayer/Factory.h>
 #include <ResourceLayer/Mesh.h>
+
+class Triangle;
 class TriangleMesh;
 
 class Triangle : public Shape {
   public:
     Triangle() = default;
 
-    Triangle(int _primID, int _vtx0Idx, int _vtx1Idx, int _vtx2Idx,
-             const TriangleMesh *_mesh);
+    Triangle(int primID, int geomID, Point3f vtx0, Point3f vtx1, Point3f vtx2)
+        : primID_(primID), vtx0_(vtx0), vtx1_(vtx1), vtx2_(vtx2) {
+        boundingBox.Expand(vtx0_);
+        boundingBox.Expand(vtx1_);
+        boundingBox.Expand(vtx2_);
+        geometryID_ = geomID;
+    }
+
+    Triangle(int primID, int vtx0Idx, int vtx1Idx, int vtx2Idx,
+             const TriangleMesh &mesh);
 
     virtual bool rayIntersectShape(Ray &ray, int &primID, float &u,
                                    float &v) const override;
 
     virtual void fillIntersection(float distance, int primID, float u, float v,
-                                  Intersection *intersection) const override;
+                                  Intersection &intersection) const override;
 
-    virtual void uniformSampleOnSurface(Vector2f sample,
-                                        Intersection *intersection,
+    virtual void uniformSampleOnSurface(Vector2f sample, Intersection &result,
                                         float *pdf) const override {
-        // TODO finish this
-        return;
+        Todo();
     }
 
   public:
     int primID_;
-    int vtx0Idx, vtx1Idx, vtx2Idx;
-    const TriangleMesh *mesh = nullptr;
+    Point3f vtx0_, vtx1_, vtx2_;
 };
 
 class TriangleMesh : public Shape {
@@ -44,13 +51,12 @@ class TriangleMesh : public Shape {
                                    float &v) const override;
 
     virtual void fillIntersection(float distance, int primID, float u, float v,
-                                  Intersection *intersection) const override;
+                                  Intersection &intersection) const override;
 
     virtual void uniformSampleOnSurface(Vector2f sample,
-                                        Intersection *intersection,
+                                        Intersection &intersection,
                                         float *pdf) const override {
-        // TODO finish this
-        return;
+        Todo();
     }
 
     virtual void initInternalAcceleration() override;

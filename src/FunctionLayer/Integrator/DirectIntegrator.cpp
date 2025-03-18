@@ -13,7 +13,7 @@ DirectIntegratorSampleLight::li(Ray &ray, const Scene &scene,
         return spectrum;
     }
     auto intersection = intersectionOpt.value();
-    computeRayDifferentials(&intersection, ray);
+    computeRayDifferentials(intersection, ray);
 
     if (auto light = intersection.shape->light; light) {
         spectrum += light->evaluateEmission(intersection, -ray.direction);

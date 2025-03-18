@@ -12,7 +12,7 @@ bool Disk::rayIntersectShape(Ray &ray, int &primID, float &u, float &v) const {
 }
 
 void Disk::fillIntersection(float distance, int primID, float u, float v,
-                            Intersection *intersection) const {
+                            Intersection &intersection) const {
     /// ----------------------------------------------------
     //* todo 填充圆环相交信息中的法线以及相交位置信息
     //* 1.法线可以先计算出局部空间的法线，然后变换到世界空间
@@ -20,18 +20,18 @@ void Disk::fillIntersection(float distance, int primID, float u, float v,
     //* Write your code here.
     /// ----------------------------------------------------
 
-    intersection->shape = this;
-    intersection->distance = distance;
-    intersection->texCoord = Vector2f{u, v};
+    intersection.shape = this;
+    intersection.distance = distance;
+    intersection.texCoord = Vector2f{u, v};
     Vector3f tangent{1.f, 0.f, .0f};
     Vector3f bitangent;
-    if (std::abs(dot(tangent, intersection->normal)) > .9f) {
+    if (std::abs(dot(tangent, intersection.normal)) > .9f) {
         tangent = Vector3f(.0f, 1.f, .0f);
     }
-    bitangent = normalize(cross(tangent, intersection->normal));
-    tangent = normalize(cross(intersection->normal, bitangent));
-    intersection->tangent = tangent;
-    intersection->bitangent = bitangent;
+    bitangent = normalize(cross(tangent, intersection.normal));
+    tangent = normalize(cross(intersection.normal, bitangent));
+    intersection.tangent = tangent;
+    intersection.bitangent = bitangent;
 }
 
 Disk::Disk(const Json &json) : Shape(json) {
@@ -50,7 +50,7 @@ Disk::Disk(const Json &json) : Shape(json) {
     boundingBox = transform.toWorld(local);
 }
 
-void Disk::uniformSampleOnSurface(Vector2f sample, Intersection *result,
+void Disk::uniformSampleOnSurface(Vector2f sample, Intersection &result,
                                   float *pdf) const {
     // 采样光源 暂时不用实现
 }

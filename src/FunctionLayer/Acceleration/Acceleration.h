@@ -25,7 +25,7 @@ class Acceleration {
         if (!hit)
             return std::nullopt;
         Intersection its;
-        shapes[geomID]->fillIntersection(ray.tFar, primID, u, v, &its);
+        shapes[geomID]->fillIntersection(ray.tFar, primID, u, v, its);
         return std::make_optional(its);
     }
 

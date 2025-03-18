@@ -1,37 +1,29 @@
 #include "Triangle.h"
 #include <FunctionLayer/Acceleration/Linear.h>
+
 //--- Triangle ---
-Triangle::Triangle(int _primID, int _vtx0Idx, int _vtx1Idx, int _vtx2Idx,
-                   const TriangleMesh *_mesh)
-    : primID_(_primID), vtx0Idx(_vtx0Idx), vtx1Idx(_vtx1Idx), vtx2Idx(_vtx2Idx),
-      mesh(_mesh) {
-    Point3f vtx0 =
-                mesh->transform.toWorld(mesh->meshData->vertexBuffer[vtx0Idx]),
-            vtx1 =
-                mesh->transform.toWorld(mesh->meshData->vertexBuffer[vtx1Idx]),
-            vtx2 =
-                mesh->transform.toWorld(mesh->meshData->vertexBuffer[vtx2Idx]);
-    boundingBox.Expand(vtx0);
-    boundingBox.Expand(vtx1);
-    boundingBox.Expand(vtx2);
-    this->geometryID_ = mesh->geometryID_;
+
+Triangle::Triangle(int primID, int vtx0Idx, int vtx1Idx, int vtx2Idx,
+                   const TriangleMesh &mesh)
+    : primID_(primID),
+      vtx0_(mesh.transform.toWorld(mesh.meshData->vertexBuffer[vtx0Idx])),
+      vtx1_(mesh.transform.toWorld(mesh.meshData->vertexBuffer[vtx1Idx])),
+      vtx2_(mesh.transform.toWorld(mesh.meshData->vertexBuffer[vtx2Idx])) {
+    boundingBox.Expand(vtx0_);
+    boundingBox.Expand(vtx1_);
+    boundingBox.Expand(vtx2_);
+    geometryID_ = mesh.geometryID_;
 }
 
 bool Triangle::rayIntersectShape(Ray &ray, int &primID, float &u,
                                  float &v) const {
     Point3f origin = ray.origin;
     Vector3f direction = ray.direction;
-    Point3f vtx0 =
-                mesh->transform.toWorld(mesh->meshData->vertexBuffer[vtx0Idx]),
-            vtx1 =
-                mesh->transform.toWorld(mesh->meshData->vertexBuffer[vtx1Idx]),
-            vtx2 =
-                mesh->transform.toWorld(mesh->meshData->vertexBuffer[vtx2Idx]);
 
-    Vector3f edge0 = vtx1 - vtx0, edge1 = vtx2 - vtx0;
+    Vector3f edge0 = vtx1_ - vtx0_, edge1 = vtx2_ - vtx0_;
 
     Vector3f paralNormal = normalize(cross(edge0, edge1));
-    float d = -dot(paralNormal, Vector3f{vtx0[0], vtx0[1], vtx0[2]});
+    float d = -dot(paralNormal, Vector3f{vtx0_[0], vtx0_[1], vtx0_[2]});
     float a = dot(paralNormal, Vector3f{origin[0], origin[1], origin[2]}) + d;
     float b = dot(paralNormal, direction);
     if (b == .0f)
@@ -43,12 +35,12 @@ bool Triangle::rayIntersectShape(Ray &ray, int &primID, float &u,
 
     Point3f hitpoint = origin + t * direction;
     // hitpoint = vtx0 + u * e0 + v * e1, 0 <= u, v <= 1
-    Vector3f v1 = cross(hitpoint - vtx0, edge1), v2 = cross(edge0, edge1);
+    Vector3f v1 = cross(hitpoint - vtx0_, edge1), v2 = cross(edge0, edge1);
     float u_ = v1.length() / v2.length();
     if (dot(v1, v2) < 0)
         u_ *= -1;
 
-    v1 = cross(hitpoint - vtx0, edge0);
+    v1 = cross(hitpoint - vtx0_, edge0);
     v2 = cross(edge1, edge0);
     float v_ = v1.length() / v2.length();
     if (dot(v1, v2) < 0)
@@ -66,7 +58,7 @@ bool Triangle::rayIntersectShape(Ray &ray, int &primID, float &u,
 }
 
 void Triangle::fillIntersection(float distance, int primID, float u, float v,
-                                Intersection *intersection) const {
+                                Intersection &intersection) const {
     // 该函数实际上不会被调用
     return;
 }
@@ -110,9 +102,9 @@ bool TriangleMesh::rayIntersectShape(Ray &ray, int &primID, float &u,
 }
 
 void TriangleMesh::fillIntersection(float distance, int primID, float u,
-                                    float v, Intersection *intersection) const {
-    intersection->distance = distance;
-    intersection->shape = this;
+                                    float v, Intersection &intersection) const {
+    intersection.distance = distance;
+    intersection.shape = this;
     //* 在三角形内部用插值计算交点、法线以及纹理坐标
     auto faceInfo = meshData->faceBuffer[primID];
     float w = 1.f - u - v;
@@ -124,9 +116,9 @@ void TriangleMesh::fillIntersection(float distance, int primID, float u,
                 meshData->vertexBuffer[faceInfo[1].vertexIndex]),
             pv = transform.toWorld(
                 meshData->vertexBuffer[faceInfo[2].vertexIndex]);
-    intersection->position = Point3f{w * pw[0] + u * pu[0] + v * pv[0],
-                                     w * pw[1] + u * pu[1] + v * pv[1],
-                                     w * pw[2] + u * pu[2] + v * pv[2]};
+    intersection.position = Point3f{w * pw[0] + u * pu[0] + v * pv[0],
+                                    w * pw[1] + u * pu[1] + v * pv[1],
+                                    w * pw[2] + u * pu[2] + v * pv[2]};
     //* 计算法线
     if (meshData->normalBuffer.size() != 0) {
         Vector3f nw = transform.toWorld(
@@ -135,9 +127,9 @@ void TriangleMesh::fillIntersection(float distance, int primID, float u,
                      meshData->normalBuffer[faceInfo[1].normalIndex]),
                  nv = transform.toWorld(
                      meshData->normalBuffer[faceInfo[2].normalIndex]);
-        intersection->normal = normalize(w * nw + u * nu + v * nv);
+        intersection.normal = normalize(w * nw + u * nu + v * nv);
     } else {
-        intersection->normal = normalize(cross(pu - pw, pv - pw));
+        intersection.normal = normalize(cross(pu - pw, pv - pw));
     }
 
     //* 计算纹理坐标
@@ -145,21 +137,21 @@ void TriangleMesh::fillIntersection(float distance, int primID, float u,
         Vector2f tw = meshData->texcodBuffer[faceInfo[0].texcodIndex],
                  tu = meshData->texcodBuffer[faceInfo[1].texcodIndex],
                  tv = meshData->texcodBuffer[faceInfo[2].texcodIndex];
-        intersection->texCoord = w * tw + u * tu + v * tv;
+        intersection.texCoord = w * tw + u * tu + v * tv;
     } else {
-        intersection->texCoord = Vector2f{.0f, .0f};
+        intersection.texCoord = Vector2f{.0f, .0f};
     }
 
     // TODO 计算交点的切线和副切线
     Vector3f tangent{1.f, 0.f, .0f};
     Vector3f bitangent;
-    if (std::abs(dot(tangent, intersection->normal)) > .9f) {
+    if (std::abs(dot(tangent, intersection.normal)) > .9f) {
         tangent = Vector3f(.0f, 1.f, .0f);
     }
-    bitangent = normalize(cross(tangent, intersection->normal));
-    tangent = normalize(cross(intersection->normal, bitangent));
-    intersection->tangent = tangent;
-    intersection->bitangent = bitangent;
+    bitangent = normalize(cross(tangent, intersection.normal));
+    tangent = normalize(cross(intersection.normal, bitangent));
+    intersection.tangent = tangent;
+    intersection.bitangent = bitangent;
 }
 
 void TriangleMesh::initInternalAcceleration() {
@@ -169,8 +161,8 @@ void TriangleMesh::initInternalAcceleration() {
         int vtx0Idx = meshData->faceBuffer[primID][0].vertexIndex,
             vtx1Idx = meshData->faceBuffer[primID][1].vertexIndex,
             vtx2Idx = meshData->faceBuffer[primID][2].vertexIndex;
-        std::shared_ptr<Triangle> triangle =
-            std::make_shared<Triangle>(primID, vtx0Idx, vtx1Idx, vtx2Idx, this);
+        std::shared_ptr<Triangle> triangle = std::make_shared<Triangle>(
+            primID, vtx0Idx, vtx1Idx, vtx2Idx, *this);
         acceleration->attachShape(triangle);
     }
     acceleration->build();

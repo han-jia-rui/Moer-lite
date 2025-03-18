@@ -15,7 +15,7 @@ LightSampleResult AreaLight::sample(const Intersection &shadingPoint,
                                     const Vector2f &sample) const {
     Intersection sampleResult;
     float pdf;
-    shape->uniformSampleOnSurface(sample, &sampleResult, &pdf);
+    shape->uniformSampleOnSurface(sample, sampleResult, &pdf);
     Vector3f shadingPoint2sample =
         sampleResult.position - shadingPoint.position;
 

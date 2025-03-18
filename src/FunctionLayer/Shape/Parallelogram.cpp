@@ -62,25 +62,25 @@ bool Parallelogram::rayIntersectShape(Ray &ray, int &primID, float &u,
 
 void Parallelogram::fillIntersection(float distance, int primID, float u,
                                      float v,
-                                     Intersection *intersection) const {
-    intersection->shape = this;
-    intersection->distance = distance;
-    intersection->normal = normalize(cross(edge0, edge1));
-    intersection->texCoord = Vector2f{u, v};
-    intersection->position = base + u * edge0 + v * edge1;
-    intersection->dpdu = edge0, intersection->dpdv = edge1;
-    intersection->tangent = normalize(intersection->dpdu);
-    intersection->bitangent =
-        normalize(cross(intersection->tangent, intersection->normal));
+                                     Intersection &intersection) const {
+    intersection.shape = this;
+    intersection.distance = distance;
+    intersection.normal = normalize(cross(edge0, edge1));
+    intersection.texCoord = Vector2f{u, v};
+    intersection.position = base + u * edge0 + v * edge1;
+    intersection.dpdu = edge0, intersection.dpdv = edge1;
+    intersection.tangent = normalize(intersection.dpdu);
+    intersection.bitangent =
+        normalize(cross(intersection.tangent, intersection.normal));
 }
 
 void Parallelogram::uniformSampleOnSurface(Vector2f sample,
-                                           Intersection *intersection,
+                                           Intersection &result,
                                            float *pdf) const {
     const static float area = cross(edge0, edge1).length();
     *pdf = 1.f / area;
     fillIntersection(.0f /*unused */, 0 /*unused*/, sample[0], sample[1],
-                     intersection);
+                     result);
 }
 
 REGISTER_CLASS(Parallelogram, "parallelogram")

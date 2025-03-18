@@ -100,14 +100,14 @@ bool Cube::rayIntersectShape(Ray &ray, int &primID, float &u, float &v) const {
 }
 
 void Cube::fillIntersection(float distance, int primID, float u, float v,
-                            Intersection *intersection) const {
-    intersection->shape = this;
-    intersection->distance = distance;
+                            Intersection &intersection) const {
+    intersection.shape = this;
+    intersection.distance = distance;
     vecmat::vec4f normal{.0f, .0f, .0f, .0f};
     normal[primID / 2] = (primID % 2) ? 1 : -1;
 
     normal = transform.rotate * normal;
-    intersection->normal = normalize(Vector3f{normal[0], normal[1], normal[2]});
+    intersection.normal = normalize(Vector3f{normal[0], normal[1], normal[2]});
 
     vecmat::vec4f hitpoint;
     hitpoint[primID / 2] =
@@ -121,19 +121,19 @@ void Cube::fillIntersection(float distance, int primID, float u, float v,
     hitpoint = transform.translate * transform.rotate * hitpoint;
     hitpoint /= hitpoint[3];
 
-    intersection->position = Point3f{hitpoint[0], hitpoint[1], hitpoint[2]};
+    intersection.position = Point3f{hitpoint[0], hitpoint[1], hitpoint[2]};
 
-    intersection->texCoord = Vector2f{u, v};
+    intersection.texCoord = Vector2f{u, v};
     // TODO 计算交点的切线和副切线
     Vector3f tangent{1.f, 0.f, .0f};
     Vector3f bitangent;
-    if (std::abs(dot(tangent, intersection->normal)) > .9f) {
+    if (std::abs(dot(tangent, intersection.normal)) > .9f) {
         tangent = Vector3f(.0f, 1.f, .0f);
     }
-    bitangent = normalize(cross(tangent, intersection->normal));
-    tangent = normalize(cross(intersection->normal, bitangent));
-    intersection->tangent = tangent;
-    intersection->bitangent = bitangent;
+    bitangent = normalize(cross(tangent, intersection.normal));
+    tangent = normalize(cross(intersection.normal, bitangent));
+    intersection.tangent = tangent;
+    intersection.bitangent = bitangent;
 }
 
 REGISTER_CLASS(Cube, "cube")

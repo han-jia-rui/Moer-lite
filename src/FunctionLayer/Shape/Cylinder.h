@@ -6,9 +6,9 @@ class Cylinder : public Shape {
                            float &v) const override;
 
     void fillIntersection(float distance, int primID, float u, float v,
-                          Intersection *intersection) const override;
+                          Intersection &intersection) const override;
 
-    void uniformSampleOnSurface(Vector2f sample, Intersection *result,
+    void uniformSampleOnSurface(Vector2f sample, Intersection &result,
                                 float *pdf) const override;
 
     Cylinder(const Json &json);
