@@ -1,5 +1,6 @@
 #pragma once
 #include "JsonUtil.h"
+#include "Todo.h"
 #include <map>
 
 #define REGISTER_CLASS(CLASS, CLASS_NAME)                                      \
