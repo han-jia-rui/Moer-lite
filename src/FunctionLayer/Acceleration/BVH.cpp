@@ -17,19 +17,20 @@ void BVHNode::build(int left, int right,
     }
 
     axis = bbox.MaxExtent();
-    int mid = (left + right) >> 1;
-    std::nth_element(shapes.begin() + left, shapes.begin() + mid,
-                     shapes.begin() + right,
-                     [&](const auto &lhs, const auto &rhs) {
-                         return lhs->getAABB().Center()[axis] <
-                                rhs->getAABB().Center()[axis];
-                     });
-    left_node = std::make_unique<BVHNode>();
-    left_node->build(left, mid, shapes);
-    right_node = std::make_unique<BVHNode>();
-    right_node->build(mid, right, shapes);
-
-    bbox = left_node->bbox.Union(right_node->bbox);
+    int step = (right - left) / MaxChildNum;
+    for (int i = 0; i < MaxChildNum; ++i) {
+        int l = left + i * step;
+        int r = i == MaxChildNum - 1 ? right : left + (i + 1) * step;
+        std::nth_element(shapes.begin() + l, shapes.begin() + r,
+                         shapes.begin() + right,
+                         [&](const auto &lhs, const auto &rhs) {
+                             return lhs->getAABB().Center()[axis] <
+                                    rhs->getAABB().Center()[axis];
+                         });
+        children[i] = std::make_unique<BVHNode>();
+        children[i]->build(l, r, shapes);
+        bbox = bbox.Union(children[i]->bbox);
+    }
 }
 
 bool BVHNode::rayIntersect(
@@ -48,12 +49,17 @@ bool BVHNode::rayIntersect(
     }
 
     if (ray.direction[axis] > 0) {
-        return left_node->rayIntersect(ray, geomID, primID, u, v, shapes) ||
-               right_node->rayIntersect(ray, geomID, primID, u, v, shapes);
+        for (int i = 0; i < MaxChildNum; ++i) {
+            if (children[i]->rayIntersect(ray, geomID, primID, u, v, shapes))
+                return true;
+        }
     } else {
-        return right_node->rayIntersect(ray, geomID, primID, u, v, shapes) ||
-               left_node->rayIntersect(ray, geomID, primID, u, v, shapes);
+        for (int i = MaxChildNum - 1; i >= 0; --i) {
+            if (children[i]->rayIntersect(ray, geomID, primID, u, v, shapes))
+                return true;
+        }
     }
+    return false;
 }
 
 void BVH::build() {

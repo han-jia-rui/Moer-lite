@@ -3,7 +3,8 @@
 
 struct BVHNode {
     static constexpr int MaxLeafSize = 2;
-    std::unique_ptr<BVHNode> left_node, right_node;
+    static constexpr int MaxChildNum = 2;
+    std::unique_ptr<BVHNode> children[MaxChildNum];
     int l_idx, r_idx;
     AABB bbox;
     int axis;
