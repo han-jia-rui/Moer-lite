@@ -17,7 +17,7 @@ class Shape : public Transformable {
 
     virtual RTCGeometry getEmbreeGeometry(RTCDevice device) const;
 
-    AABB getAABB() const { return boundingBox; }
+    const AABB &getAABB() const { return boundingBox; }
 
     virtual bool rayIntersectShape(Ray &ray, int &primID, float &u,
                                    float &v) const = 0;

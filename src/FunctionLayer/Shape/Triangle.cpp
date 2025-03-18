@@ -1,5 +1,4 @@
 #include "Triangle.h"
-#include "CoreLayer/Math/Constant.h"
 #include "CoreLayer/Math/Geometry.h"
 #include <FunctionLayer/Acceleration/Linear.h>
 
@@ -27,7 +26,7 @@ bool Triangle::rayIntersectShape(Ray &ray, int &primID, float &u,
 
     auto norm = cross(edge1, edge2);
     auto det = -dot(direction, norm);
-    if (std::abs(det) < EPSILON) // parallel
+    if (nearZero(det)) // parallel
         return false;
 
     auto inv_det = 1.f / det;
@@ -56,10 +55,9 @@ void Triangle::fillIntersection(float distance, int primID, float u, float v,
 }
 
 //--- TriangleMesh ---
-TriangleMesh::TriangleMesh(const Json &json) : Shape(json) {
-    const auto &filepath = fetchRequired<std::string>(json, "file");
-    meshData = MeshData::loadFromFile(filepath);
-}
+TriangleMesh::TriangleMesh(const Json &json)
+    : Shape(json), meshData(MeshData::loadFromFile(
+                       fetchRequired<std::string>(json, "file"))) {}
 
 RTCGeometry TriangleMesh::getEmbreeGeometry(RTCDevice device) const {
     RTCGeometry geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_TRIANGLE);

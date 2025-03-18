@@ -2,9 +2,9 @@ cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -fopenmp")
 
 project(Moer-lite LANGUAGES CXX)
-add_compile_options(-O2  -fopenmp)
 
 if(MSVC)
     add_compile_options("/MP")

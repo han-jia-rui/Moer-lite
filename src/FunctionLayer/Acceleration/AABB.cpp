@@ -39,12 +39,15 @@ bool AABB::Overlap(const AABB &other) const {
     return true;
 }
 
-bool AABB::RayIntersect(const Ray &ray, float *tMin, float *tMax) const {
-    float tNear = ray.tNear, tFar = ray.tFar;
-    for (int i = 0; i < 3; ++i) {
-        float invDir = 1.f / ray.direction[i];
-        float t0 = (pMin[i] - ray.origin[i]) * invDir,
-              t1 = (pMax[i] - ray.origin[i]) * invDir;
+bool AABB::rayIntersect(const Ray &ray) const {
+    auto tNear = ray.tNear, tFar = ray.tFar;
+    for (auto i = 0; i < 3; ++i) {
+        if (nearZero(ray.direction[i])) {
+            return false;
+        }
+        auto invDir = 1.f / ray.direction[i];
+        auto t0 = (pMin[i] - ray.origin[i]) * invDir,
+             t1 = (pMax[i] - ray.origin[i]) * invDir;
         if (t0 > t1)
             std::swap(t0, t1);
         tNear = std::max(tNear, t0);
@@ -53,14 +56,19 @@ bool AABB::RayIntersect(const Ray &ray, float *tMin, float *tMax) const {
         if (tNear > tFar)
             return false;
     }
-    if (tMin)
-        *tMin = tNear;
-    if (tMax)
-        *tMax = tFar;
     return true;
 }
 
 Point3f AABB::Center() const {
     return Point3f{(pMin[0] + pMax[0]) * .5f, (pMin[1] + pMax[1]) * .5f,
                    (pMin[2] + pMax[2]) * .5f};
+}
+
+int AABB::MaxExtent() const {
+    auto span = pMax - pMin;
+    if (span[0] > span[1]) {
+        return span[0] > span[2] ? 0 : 2;
+    } else {
+        return span[1] > span[2] ? 1 : 2;
+    }
 }

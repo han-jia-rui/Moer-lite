@@ -22,10 +22,11 @@ class AABB {
 
     bool Overlap(const AABB &other) const;
 
-    bool RayIntersect(const Ray &ray, float *tMin = nullptr,
-                      float *tMax = nullptr) const;
+    bool rayIntersect(const Ray &ray) const;
 
     Point3f Center() const;
+
+    int MaxExtent() const;
 
   public:
     Point3f pMin, pMax;

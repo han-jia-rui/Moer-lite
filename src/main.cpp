@@ -46,8 +46,8 @@ int main(int argc, char **argv) {
 
     auto start = std::chrono::system_clock::now();
 
-    // #pragma omp parallel for
     for (int y = 0; y < height; ++y) {
+#pragma omp parallel for schedule(dynamic)
         for (int x = 0; x < width; ++x) {
             Vector2f NDC{(float)x / width, (float)y / height};
             Spectrum li{.0f};
@@ -57,11 +57,9 @@ int main(int argc, char **argv) {
                 li += integrator->li(ray, *scene, sampler);
             }
             camera->film->deposit({x, y}, li / spp);
-
-            int finished = x + y * width;
-            if (finished % 5 == 0) {
-                printProgress((float)finished / (height * width));
-            }
+        }
+        if (y % 5 == 0) {
+            printProgress((float)y / height);
         }
     }
 

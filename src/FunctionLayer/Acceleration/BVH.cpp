@@ -1,21 +1,71 @@
 #include "BVH.h"
-struct BVH::BVHNode {
-    //* todo BVH节点结构设计
-};
-void BVH::build() {
-    AABB sceneBox;
-    for (const auto &shape : shapes) {
-        //* 自行实现的加速结构请务必对每个shape调用该方法，以保证TriangleMesh构建内部加速结构
-        //* 由于使用embree时，TriangleMesh::getAABB不会被调用，因此出于性能考虑我们不在TriangleMesh
-        //* 的构造阶段计算其AABB，因此当我们将TriangleMesh的AABB计算放在TriangleMesh::initInternalAcceleration中
-        //* 所以请确保在调用TriangleMesh::getAABB之前先调用TriangleMesh::initInternalAcceleration
-        shape->initInternalAcceleration();
-        sceneBox.Expand(shape->getAABB());
+#include <algorithm>
+#include <memory>
+#include <vector>
+
+void BVHNode::build(int left, int right,
+                    std::vector<std::shared_ptr<Shape>> &shapes) {
+    l_idx = left;
+    r_idx = right;
+
+    if (right - left <= MaxLeafSize) {
+        leaf = true;
+        for (int i = left; i < right; ++i) {
+            bbox.Expand(shapes[i]->getAABB());
+        }
+        return;
     }
-    //* todo 完成BVH构建
+
+    axis = bbox.MaxExtent();
+    int mid = (left + right) >> 1;
+    std::nth_element(shapes.begin() + left, shapes.begin() + mid,
+                     shapes.begin() + right,
+                     [&](const auto &lhs, const auto &rhs) {
+                         return lhs->getAABB().Center()[axis] <
+                                rhs->getAABB().Center()[axis];
+                     });
+    left_node = std::make_unique<BVHNode>();
+    left_node->build(left, mid, shapes);
+    right_node = std::make_unique<BVHNode>();
+    right_node->build(mid, right, shapes);
+
+    bbox = left_node->bbox.Union(right_node->bbox);
 }
+
+bool BVHNode::rayIntersect(
+    Ray &ray, int &geomID, int &primID, float &u, float &v,
+    const std::vector<std::shared_ptr<Shape>> &shapes) const {
+    if (!bbox.rayIntersect(ray))
+        return false;
+
+    if (leaf) {
+        for (int i = l_idx; i < r_idx; ++i) {
+            if (shapes[i]->rayIntersectShape(ray, primID, u, v)) {
+                geomID = shapes[i]->geometryID_;
+            }
+        }
+        return geomID != -1;
+    }
+
+    if (ray.direction[axis] > 0) {
+        return left_node->rayIntersect(ray, geomID, primID, u, v, shapes) ||
+               right_node->rayIntersect(ray, geomID, primID, u, v, shapes);
+    } else {
+        return right_node->rayIntersect(ray, geomID, primID, u, v, shapes) ||
+               left_node->rayIntersect(ray, geomID, primID, u, v, shapes);
+    }
+}
+
+void BVH::build() {
+    for (const auto &shape : shapes) {
+        shape->initInternalAcceleration();
+    }
+    root = std::make_unique<BVHNode>();
+    root->build(0, shapes.size(), shapes);
+    boundingBox = root->bbox;
+}
+
 bool BVH::rayIntersect(Ray &ray, int &geomID, int &primID, float &u,
                        float &v) const {
-    //* todo 完成BVH求交
-    return false;
+    return root->rayIntersect(ray, geomID, primID, u, v, shapes);
 }
