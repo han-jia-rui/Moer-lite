@@ -5,11 +5,15 @@
 //* 对于绝大部分图形应用来说，32位的浮点数足以满足计算精度需求且速度更快，故lite版仅支持float
 //* 在4维齐次坐标下对点以及向量进行变换时会有不同处理，故相较于直接使用数学意义上的向量，我们进行了一个简单的封装
 
+class Point3f;
+class Vector3f;
+
 //* 表示三维空间中的一个向量
 class Vector3f {
   public:
     //* 构造函数
     explicit Vector3f(float f = .0f) : xyz(vecmat::vec3f::fill(f)) {}
+    explicit Vector3f(Point3f p);
     Vector3f(float _x, float _y, float _z) : xyz(_x, _y, _z) {}
 
     //* 向量加法
@@ -79,9 +83,9 @@ class Vector3f {
 
     //* 友函数/类声明
   public:
+    friend class Point3f;
     friend float dot(const Vector3f &v1, const Vector3f &v2);
     friend Vector3f cross(const Vector3f &v1, const Vector3f &v2);
-    friend class Point3f;
 
   private:
     explicit Vector3f(const vecmat::vec3f &vec) : xyz(vec) {}
@@ -115,6 +119,7 @@ class Point3f {
   public:
     //* 构造函数
     explicit Point3f(float f = .0f) : xyz(vecmat::vec3f::fill(f)) {}
+    explicit Point3f(Vector3f v);
     Point3f(float _x, float _y, float _z) : xyz(_x, _y, _z) {}
 
     //* 与向量相加
@@ -162,6 +167,9 @@ class Point3f {
     explicit Point3f(const vecmat::vec3f &vec) : xyz(vec) {}
     vecmat::vec3f xyz;
 };
+
+inline Vector3f::Vector3f(Point3f p) : xyz(p.xyz) {}
+inline Point3f::Point3f(Vector3f v) : xyz(v.xyz) {}
 
 using Vector2f = vecmat::vec2f;
 using Vector2i = vecmat::vec2i;
