@@ -19,8 +19,8 @@ class Shape : public Transformable {
 
     AABB getAABB() const { return boundingBox; }
 
-    virtual bool rayIntersectShape(Ray &ray, int *primID, float *u,
-                                   float *v) const = 0;
+    virtual bool rayIntersectShape(Ray &ray, int &primID, float &u,
+                                   float &v) const = 0;
 
     virtual void fillIntersection(float distance, int primID, float u, float v,
                                   Intersection *intersection) const = 0;
@@ -38,7 +38,7 @@ class Shape : public Transformable {
     }
 
   public:
-    int geometryID;
+    int geometryID_;
     std::shared_ptr<Light> light;
     std::shared_ptr<Material> material;
 

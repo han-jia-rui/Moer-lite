@@ -32,8 +32,8 @@ void Octree::build() {
     root = recursiveBuild(boundingBox, primIdxBuffer);
 }
 
-bool Octree::rayIntersect(Ray &ray, int *geomID, int *primID, float *u,
-                          float *v) const {
+bool Octree::rayIntersect(Ray &ray, int &geomID, int &primID, float &u,
+                          float &v) const {
     //*todo 完成八叉树求交
     return false;
 }

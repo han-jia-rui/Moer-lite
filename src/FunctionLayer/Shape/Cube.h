@@ -7,8 +7,8 @@ class Cube : public Shape {
 
     explicit Cube(const Json &json);
 
-    virtual bool rayIntersectShape(Ray &ray, int *primID, float *u,
-                                   float *v) const override;
+    virtual bool rayIntersectShape(Ray &ray, int &primID, float &u,
+                                   float &v) const override;
 
     virtual void fillIntersection(float distance, int primID, float u, float v,
                                   Intersection *intersection) const override;

@@ -21,8 +21,8 @@ Parallelogram::Parallelogram(const Json &json) : Shape(json) {
     }
 }
 
-bool Parallelogram::rayIntersectShape(Ray &ray, int *primID, float *u,
-                                      float *v) const {
+bool Parallelogram::rayIntersectShape(Ray &ray, int &primID, float &u,
+                                      float &v) const {
     Point3f origin = ray.origin;
     Vector3f direction = ray.direction;
     Vector3f paralNormal = normalize(cross(edge0, edge1));
@@ -51,9 +51,9 @@ bool Parallelogram::rayIntersectShape(Ray &ray, int *primID, float *u,
 
     if (0.f <= u_ && u_ <= 1.f && 0.f <= v_ && v_ <= 1.f) {
         ray.tFar = t;
-        *primID = 0;
-        *u = u_;
-        *v = v_;
+        primID = 0;
+        u = u_;
+        v = v_;
         return true;
     }
 

@@ -9,12 +9,12 @@ class EmbreeBVH : public Acceleration {
   public:
     EmbreeBVH();
 
-    virtual ~EmbreeBVH() = default;
+    virtual ~EmbreeBVH() override = default;
 
     virtual void build() override;
 
-    virtual bool rayIntersect(Ray &ray, int *geomID, int *primID, float *u,
-                              float *v) const override;
+    virtual bool rayIntersect(Ray &ray, int &geomID, int &primID, float &u,
+                              float &v) const override;
 
   private:
     //* 通过RTCDevice和RTCScene调用embree

@@ -1,7 +1,7 @@
 #include "Cone.h"
 #include "ResourceLayer/Factory.h"
 
-bool Cone::rayIntersectShape(Ray &ray, int *primID, float *u, float *v) const {
+bool Cone::rayIntersectShape(Ray &ray, int &primID, float &u, float &v) const {
     //* todo 完成光线与圆柱的相交 填充primId,u,v.如果相交，更新光线的tFar
     //* 1.光线变换到局部空间
     //* 2.联立方程求解

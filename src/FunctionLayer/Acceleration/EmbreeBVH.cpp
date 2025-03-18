@@ -18,8 +18,8 @@ void EmbreeBVH::build() {
     rtcCommitScene(scene);
 }
 
-bool EmbreeBVH::rayIntersect(Ray &ray, int *geomID, int *primID, float *u,
-                             float *v) const {
+bool EmbreeBVH::rayIntersect(Ray &ray, int &geomID, int &primID, float &u,
+                             float &v) const {
     RTCIntersectContext context;
     RTCRayHit rtcRayHit;
     rtcInitIntersectContext(&context);
@@ -45,9 +45,9 @@ bool EmbreeBVH::rayIntersect(Ray &ray, int *geomID, int *primID, float *u,
 
     //* 有交点，填充intersection数据结构
     ray.tFar = rtcRayHit.ray.tfar;
-    *geomID = rtcRayHit.hit.geomID;
-    *primID = rtcRayHit.hit.primID;
-    *u = rtcRayHit.hit.u;
-    *v = rtcRayHit.hit.v;
+    geomID = rtcRayHit.hit.geomID;
+    primID = rtcRayHit.hit.primID;
+    u = rtcRayHit.hit.u;
+    v = rtcRayHit.hit.v;
     return true;
 }

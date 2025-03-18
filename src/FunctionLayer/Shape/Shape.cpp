@@ -54,10 +54,10 @@ void UserShapeIntersect(const RTCIntersectFunctionNArguments *args) {
 
     float u, v;
     int primID;
-    bool hit = shape->rayIntersectShape(ray, &primID, &u, &v);
+    bool hit = shape->rayIntersectShape(ray, primID, u, v);
     if (hit) {
         rayhit->ray.tfar = ray.tFar;
-        rayhit->hit.geomID = shape->geometryID;
+        rayhit->hit.geomID = shape->geometryID_;
         rayhit->hit.primID = primID;
         rayhit->hit.u = u;
         rayhit->hit.v = v;

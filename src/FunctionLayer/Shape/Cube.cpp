@@ -31,7 +31,7 @@ Cube::Cube(const Json &json) : Shape(json) {
     boxMax = Point3f{max[0], max[1], max[2]};
 }
 
-bool Cube::rayIntersectShape(Ray &ray, int *primID, float *u, float *v) const {
+bool Cube::rayIntersectShape(Ray &ray, int &primID, float &u, float &v) const {
     // 我们将shape的旋转和平移的逆变换应用到光线上，在不改变两者的相对位置的情况下
     // 在局部坐标系中完成求交计算，局部坐标系中cube一直是Axis-aligned box
     Point3f origin = ray.origin;
@@ -61,8 +61,8 @@ bool Cube::rayIntersectShape(Ray &ray, int *primID, float *u, float *v) const {
             return false;
     }
 
-    auto compute = [min = boxMin, max = boxMax](Point3f hitpoint, int *primID,
-                                                float *u, float *v) {
+    auto compute = [min = boxMin, max = boxMax](Point3f hitpoint, int &primID,
+                                                float &u, float &v) {
         float minBias = FLT_MAX;
         int flag = -1;
         for (int i = 0; i < 3; ++i) {
@@ -76,11 +76,11 @@ bool Cube::rayIntersectShape(Ray &ray, int *primID, float *u, float *v) const {
             }
         }
 
-        *primID = flag;
+        primID = flag;
         int axis = (flag / 2 + 1) % 3;
-        *u = (float)(hitpoint[axis] - min[axis]) / (max[axis] - min[axis]);
+        u = (float)(hitpoint[axis] - min[axis]) / (max[axis] - min[axis]);
         axis = (axis + 1) % 3;
-        *v = (float)(hitpoint[axis] - min[axis]) / (max[axis] - min[axis]);
+        v = (float)(hitpoint[axis] - min[axis]) / (max[axis] - min[axis]);
     };
 
     bool hit = false;

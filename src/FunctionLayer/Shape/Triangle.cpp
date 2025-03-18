@@ -3,7 +3,7 @@
 //--- Triangle ---
 Triangle::Triangle(int _primID, int _vtx0Idx, int _vtx1Idx, int _vtx2Idx,
                    const TriangleMesh *_mesh)
-    : primID(_primID), vtx0Idx(_vtx0Idx), vtx1Idx(_vtx1Idx), vtx2Idx(_vtx2Idx),
+    : primID_(_primID), vtx0Idx(_vtx0Idx), vtx1Idx(_vtx1Idx), vtx2Idx(_vtx2Idx),
       mesh(_mesh) {
     Point3f vtx0 =
                 mesh->transform.toWorld(mesh->meshData->vertexBuffer[vtx0Idx]),
@@ -14,11 +14,11 @@ Triangle::Triangle(int _primID, int _vtx0Idx, int _vtx1Idx, int _vtx2Idx,
     boundingBox.Expand(vtx0);
     boundingBox.Expand(vtx1);
     boundingBox.Expand(vtx2);
-    this->geometryID = mesh->geometryID;
+    this->geometryID_ = mesh->geometryID_;
 }
 
-bool Triangle::rayIntersectShape(Ray &ray, int *primID, float *u,
-                                 float *v) const {
+bool Triangle::rayIntersectShape(Ray &ray, int &primID, float &u,
+                                 float &v) const {
     Point3f origin = ray.origin;
     Vector3f direction = ray.direction;
     Point3f vtx0 =
@@ -56,9 +56,9 @@ bool Triangle::rayIntersectShape(Ray &ray, int *primID, float *u,
 
     if (u_ >= .0f && v_ >= .0f && (u_ + v_ <= 1.f)) {
         ray.tFar = t;
-        *primID = this->primID;
-        *u = u_;
-        *v = v_;
+        primID = this->primID_;
+        u = u_;
+        v = v_;
         return true;
     }
 
@@ -102,11 +102,11 @@ RTCGeometry TriangleMesh::getEmbreeGeometry(RTCDevice device) const {
     return geometry;
 }
 
-bool TriangleMesh::rayIntersectShape(Ray &ray, int *primID, float *u,
-                                     float *v) const {
+bool TriangleMesh::rayIntersectShape(Ray &ray, int &primID, float &u,
+                                     float &v) const {
     //* 当使用embree加速时，该方法不会被调用
     int geomID = -1;
-    return acceleration->rayIntersect(ray, &geomID, primID, u, v);
+    return acceleration->rayIntersect(ray, geomID, primID, u, v);
 }
 
 void TriangleMesh::fillIntersection(float distance, int primID, float u,

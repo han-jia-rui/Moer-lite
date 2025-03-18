@@ -16,7 +16,7 @@ Scene::Scene(const Json &json) {
     auto shapes = json["shapes"];
     for (size_t i = 0; i < shapes.size(); ++i) {
         auto shape = Factory::construct_class<Shape>(shapes[i]);
-        shape->geometryID = geomID++;
+        shape->geometryID_ = geomID++;
         acceleration->attachShape(shape);
     }
     //* 添加光源
@@ -35,7 +35,7 @@ Scene::Scene(const Json &json) {
         if (light->type == LightType::AreaLight) {
             auto shape = std::static_pointer_cast<AreaLight>(light)->shape;
             shape->light = light;
-            shape->geometryID = geomID++;
+            shape->geometryID_ = geomID++;
             acceleration->attachShape(shape);
         }
     }

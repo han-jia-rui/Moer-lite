@@ -21,7 +21,7 @@ class Acceleration {
     std::optional<Intersection> rayIntersect(Ray &ray) const {
         int primID, geomID = -1;
         float u, v;
-        bool hit = rayIntersect(ray, &geomID, &primID, &u, &v);
+        bool hit = rayIntersect(ray, geomID, primID, u, v);
         if (!hit)
             return std::nullopt;
         Intersection its;
@@ -30,8 +30,8 @@ class Acceleration {
     }
 
     //* 所有空间加速结构需要实现的接口
-    virtual bool rayIntersect(Ray &ray, int *geomID, int *primID, float *u,
-                              float *v) const = 0;
+    virtual bool rayIntersect(Ray &ray, int &geomID, int &primID, float &u,
+                              float &v) const = 0;
 
     //* 根据场景中的所有几何体构建加速结构
     virtual void build() = 0;

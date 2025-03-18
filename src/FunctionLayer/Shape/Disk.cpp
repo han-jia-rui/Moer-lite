@@ -1,6 +1,6 @@
 #include "Disk.h"
 #include "ResourceLayer/Factory.h"
-bool Disk::rayIntersectShape(Ray &ray, int *primID, float *u, float *v) const {
+bool Disk::rayIntersectShape(Ray &ray, int &primID, float &u, float &v) const {
     //* todo 完成光线与圆环的相交 填充primId,u,v.如果相交，更新光线的tFar
     //* 1.光线变换到局部空间
     //* 2.判断局部光线的方向在z轴分量是否为0

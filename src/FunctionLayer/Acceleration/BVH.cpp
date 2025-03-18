@@ -14,8 +14,8 @@ void BVH::build() {
     }
     //* todo 完成BVH构建
 }
-bool BVH::rayIntersect(Ray &ray, int *geomID, int *primID, float *u,
-                       float *v) const {
+bool BVH::rayIntersect(Ray &ray, int &geomID, int &primID, float &u,
+                       float &v) const {
     //* todo 完成BVH求交
     return false;
 }
