@@ -1,3 +1,4 @@
+#include "CoreLayer/Math/Geometry.h"
 #include <CoreLayer/Math/Math.h>
 #include <FunctionLayer/Camera/Pinhole.h>
 #include <FunctionLayer/Integrator/Integrator.h>
@@ -52,7 +53,7 @@ int main(int argc, char **argv) {
             Spectrum li{.0f};
             for (int i = 0; i < spp; ++i) {
                 Ray ray = camera->sampleRayDifferentials(
-                    CameraSample{sampler->next2D()}, NDC);
+                    CameraSample{sampler->next2D(), Vector2f{}, 0}, NDC);
                 li += integrator->li(ray, *scene, sampler);
             }
             camera->film->deposit({x, y}, li / spp);
