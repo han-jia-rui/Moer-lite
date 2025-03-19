@@ -10,6 +10,9 @@ Triangle::Triangle(int primID, int vtx0Idx, int vtx1Idx, int vtx2Idx,
       v0_(mesh.transform.toWorld(mesh.meshData->vertexBuffer[vtx0Idx])),
       v1_(mesh.transform.toWorld(mesh.meshData->vertexBuffer[vtx1Idx])),
       v2_(mesh.transform.toWorld(mesh.meshData->vertexBuffer[vtx2Idx])) {
+    edge1 = v1_ - v0_;
+    edge2 = v2_ - v0_;
+    norm = cross(edge1, edge2);
     boundingBox.Expand(v0_);
     boundingBox.Expand(v1_);
     boundingBox.Expand(v2_);
@@ -21,10 +24,6 @@ bool Triangle::rayIntersectShape(Ray &ray, int &primID, float &u,
     const auto &origin = ray.origin;
     const auto &direction = ray.direction;
 
-    auto edge1 = v1_ - v0_;
-    auto edge2 = v2_ - v0_;
-
-    auto norm = cross(edge1, edge2);
     auto det = -dot(direction, norm);
     if (nearZero(det)) // parallel
         return false;

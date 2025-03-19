@@ -36,6 +36,7 @@ class Triangle : public Shape {
   public:
     int primID_;
     Point3f v0_, v1_, v2_;
+    Vector3f edge1, edge2, norm;
 };
 
 class TriangleMesh : public Shape {
