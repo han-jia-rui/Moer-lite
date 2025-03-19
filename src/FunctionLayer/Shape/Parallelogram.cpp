@@ -1,15 +1,13 @@
 #include "Parallelogram.h"
+#include "CoreLayer/Math/Geometry.h"
 #include <ResourceLayer/Factory.h>
-Parallelogram::Parallelogram(const Json &json) : Shape(json) {
-    base = fetchRequired<Point3f>(json, "base");
-    edge0 = fetchRequired<Vector3f>(json, "edge0");
-    edge1 = fetchRequired<Vector3f>(json, "edge1");
+Parallelogram::Parallelogram(const Json &json, int primID)
+    : Shape(json), primitiveID_(primID),
+      base(transform.toWorld(fetchRequired<Point3f>(json, "base"))),
+      edge0(transform.toWorld(fetchRequired<Vector3f>(json, "edge0"))),
+      edge1(transform.toWorld(fetchRequired<Vector3f>(json, "edge1"))) {
+    norm = cross(edge0, edge1);
 
-    base = transform.toWorld(base);
-    edge0 = transform.toWorld(edge0);
-    edge1 = transform.toWorld(edge1);
-
-    //* 计算AABB包围盒
     Point3f vertices[4];
     vertices[0] = base;
     vertices[1] = vertices[0] + edge0;
@@ -23,41 +21,30 @@ Parallelogram::Parallelogram(const Json &json) : Shape(json) {
 
 bool Parallelogram::rayIntersectShape(Ray &ray, int &primID, float &u,
                                       float &v) const {
-    Point3f origin = ray.origin;
-    Vector3f direction = ray.direction;
-    Vector3f paralNormal = normalize(cross(edge0, edge1));
-    float d = -dot(paralNormal, Vector3f{base[0], base[1], base[2]});
-    float a = dot(paralNormal, Vector3f{origin[0], origin[1], origin[2]}) + d;
-    float b = dot(paralNormal, direction);
-    if (b == .0f)
-        return false; // miss
-    float t = -a / b;
+    const auto &origin = ray.origin;
+    const auto &direction = ray.direction;
 
+    auto det = -dot(direction, norm);
+    if (nearZero(det)) // parallel
+        return false;
+
+    auto inv_det = 1.f / det;
+    auto to = origin - base;
+    auto tmp_u = dot(to, cross(direction, edge1)) * inv_det;
+    auto tmp_v = dot(direction, cross(to, edge0)) * inv_det;
+    if (tmp_u < .0f || tmp_v < .0f || tmp_u > 1.f || tmp_v > 1.f)
+        return false;
+
+    auto t = dot(edge1, cross(to, edge0)) * inv_det;
     if (t < ray.tNear || t > ray.tFar)
         return false;
 
-    Point3f hitpoint = origin + t * direction;
-    // hitpoint = base + u * e0 + v * e1, 0 <= u, v <= 1
-    Vector3f v1 = cross(hitpoint - base, edge1), v2 = cross(edge0, edge1);
-    float u_ = v1.length() / v2.length();
-    if (dot(v1, v2) < 0)
-        u_ *= -1;
+    ray.tFar = t;
+    primID = primitiveID_;
+    u = tmp_u;
+    v = tmp_v;
 
-    v1 = cross(hitpoint - base, edge0);
-    v2 = cross(edge1, edge0);
-    float v_ = v1.length() / v2.length();
-    if (dot(v1, v2) < 0)
-        v_ *= -1;
-
-    if (0.f <= u_ && u_ <= 1.f && 0.f <= v_ && v_ <= 1.f) {
-        ray.tFar = t;
-        primID = 0;
-        u = u_;
-        v = v_;
-        return true;
-    }
-
-    return false;
+    return true;
 }
 
 void Parallelogram::fillIntersection(float distance, int primID, float u,

@@ -38,6 +38,7 @@ class Acceleration {
 
     //* 向加速结构中增加一个几何体
     void attachShape(std::shared_ptr<Shape> shape) {
+        shape->geometryID_ = shapesNum++;
         shapes.emplace_back(shape);
     }
 
@@ -47,5 +48,6 @@ class Acceleration {
     AABB boundingBox;
 
   protected:
+    int shapesNum = 0;
     std::vector<std::shared_ptr<Shape>> shapes; //* 场景中的所有几何体
 };

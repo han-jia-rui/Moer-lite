@@ -6,7 +6,7 @@ class Parallelogram : public Shape {
   public:
     Parallelogram() = delete;
 
-    Parallelogram(const Json &json);
+    explicit Parallelogram(const Json &json, int primID = 0);
 
     virtual bool rayIntersectShape(Ray &ray, int &primID, float &u,
                                    float &v) const override;
@@ -18,6 +18,7 @@ class Parallelogram : public Shape {
                                         float *pdf) const override;
 
   public:
+    int primitiveID_;
     Point3f base;
-    Vector3f edge0, edge1;
+    Vector3f edge0, edge1, norm;
 };

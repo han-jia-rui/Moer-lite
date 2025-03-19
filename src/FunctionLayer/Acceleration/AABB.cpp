@@ -42,9 +42,6 @@ bool AABB::Overlap(const AABB &other) const {
 bool AABB::rayIntersect(const Ray &ray) const {
     auto tNear = ray.tNear, tFar = ray.tFar;
     for (auto i = 0; i < 3; ++i) {
-        if (nearZero(ray.direction[i])) {
-            return false;
-        }
         auto invDir = 1.f / ray.direction[i];
         auto t0 = (pMin[i] - ray.origin[i]) * invDir,
              t1 = (pMax[i] - ray.origin[i]) * invDir;

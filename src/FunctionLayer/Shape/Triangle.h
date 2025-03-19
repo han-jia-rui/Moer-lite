@@ -11,13 +11,8 @@ class Triangle : public Shape {
   public:
     Triangle() = default;
 
-    Triangle(int primID, int geomID, Point3f vtx0, Point3f vtx1, Point3f vtx2)
-        : primID_(primID), v0_(vtx0), v1_(vtx1), v2_(vtx2) {
-        boundingBox.Expand(v0_);
-        boundingBox.Expand(v1_);
-        boundingBox.Expand(v2_);
-        geometryID_ = geomID;
-    }
+    Triangle(int geomID, Point3f vtx0, Point3f vtx1, Point3f vtx2,
+             int primID = 0);
 
     Triangle(int primID, int vtx0Idx, int vtx1Idx, int vtx2Idx,
              const TriangleMesh &mesh);
@@ -34,9 +29,9 @@ class Triangle : public Shape {
     }
 
   public:
-    int primID_;
-    Point3f v0_, v1_, v2_;
-    Vector3f edge1, edge2, norm;
+    int primitiveID_;
+    Point3f base;
+    Vector3f edge0, edge1, norm;
 };
 
 class TriangleMesh : public Shape {

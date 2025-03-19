@@ -4,20 +4,24 @@
 
 //--- Triangle ---
 
+Triangle::Triangle(int geomID, Point3f v0, Point3f v1, Point3f v2, int primID)
+    : primitiveID_(primID), base(v0) {
+    edge0 = v1 - base;
+    edge1 = v2 - base;
+    norm = cross(edge0, edge1);
+    boundingBox.Expand(base);
+    boundingBox.Expand(v1);
+    boundingBox.Expand(v2);
+    geometryID_ = geomID;
+}
+
 Triangle::Triangle(int primID, int vtx0Idx, int vtx1Idx, int vtx2Idx,
                    const TriangleMesh &mesh)
-    : primID_(primID),
-      v0_(mesh.transform.toWorld(mesh.meshData->vertexBuffer[vtx0Idx])),
-      v1_(mesh.transform.toWorld(mesh.meshData->vertexBuffer[vtx1Idx])),
-      v2_(mesh.transform.toWorld(mesh.meshData->vertexBuffer[vtx2Idx])) {
-    edge1 = v1_ - v0_;
-    edge2 = v2_ - v0_;
-    norm = cross(edge1, edge2);
-    boundingBox.Expand(v0_);
-    boundingBox.Expand(v1_);
-    boundingBox.Expand(v2_);
-    geometryID_ = mesh.geometryID_;
-}
+    : Triangle(mesh.geometryID_,
+               mesh.transform.toWorld(mesh.meshData->vertexBuffer[vtx0Idx]),
+               mesh.transform.toWorld(mesh.meshData->vertexBuffer[vtx1Idx]),
+               mesh.transform.toWorld(mesh.meshData->vertexBuffer[vtx2Idx]),
+               primID) {}
 
 bool Triangle::rayIntersectShape(Ray &ray, int &primID, float &u,
                                  float &v) const {
@@ -29,18 +33,18 @@ bool Triangle::rayIntersectShape(Ray &ray, int &primID, float &u,
         return false;
 
     auto inv_det = 1.f / det;
-    auto to = origin - v0_;
-    auto tmp_u = dot(to, cross(direction, edge2)) * inv_det;
-    auto tmp_v = dot(direction, cross(to, edge1)) * inv_det;
+    auto to = origin - base;
+    auto tmp_u = dot(to, cross(direction, edge1)) * inv_det;
+    auto tmp_v = dot(direction, cross(to, edge0)) * inv_det;
     if (tmp_u < .0f || tmp_v < .0f || tmp_u + tmp_v > 1.f)
         return false;
 
-    auto t = dot(edge2, cross(to, edge1)) * inv_det;
+    auto t = dot(edge1, cross(to, edge0)) * inv_det;
     if (t < ray.tNear || t > ray.tFar)
         return false;
 
     ray.tFar = t;
-    primID = primID_;
+    primID = primitiveID_;
     u = tmp_u;
     v = tmp_v;
 
