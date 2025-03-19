@@ -11,5 +11,6 @@
 *.json
 *.hdr
 *.png
+callgrind.out.*
 
 !examples/**/*.*
