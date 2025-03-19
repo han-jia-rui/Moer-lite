@@ -5,12 +5,23 @@ cmd := "./target/bin/Moer"
 default:
     @just --list
 
-build:
-    @cmake -B build -S .
-    @cmake --build build --parallel 8
+release:
+    @cmake -B build/release -S . -DCMAKE_BUILD_TYPE=Release
+    @cmake --build build/release --parallel 8
 
-test target: build
+debug:
+    @cmake -B build/debug -S . -DCMAKE_BUILD_TYPE=Debug
+    @cmake --build build/debug --parallel 8
+
+test target: release
     {{cmd}} {{target}}
+
+valgrind target: debug
+    @valgrind --tool=callgrind {{cmd}} {{target}}
+    @kcachegrind callgrind.out.*
 
 clean:
    @rm -rf ./build ./target 
+
+edit:
+    $EDITOR justfile
