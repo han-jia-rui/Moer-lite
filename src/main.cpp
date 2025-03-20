@@ -41,8 +41,8 @@ int main(int argc, char **argv) {
     auto scene = std::make_shared<Scene>(json["scene"]);
     auto integrator = Factory::construct_class<Integrator>(json["integrator"]);
     auto sampler = Factory::construct_class<Sampler>(json["sampler"]);
-    int spp = sampler->xSamples * sampler->ySamples;
-    int width = camera->film->size[0], height = camera->film->size[1];
+    auto spp = sampler->xSamples * sampler->ySamples;
+    auto width = camera->film->size[0], height = camera->film->size[1];
 
     auto start = std::chrono::system_clock::now();
 
