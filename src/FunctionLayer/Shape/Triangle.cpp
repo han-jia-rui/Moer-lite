@@ -54,7 +54,6 @@ bool Triangle::rayIntersectShape(Ray &ray, int &primID, float &u,
 void Triangle::fillIntersection(float distance, int primID, float u, float v,
                                 Intersection &intersection) const {
     Todo();
-    return;
 }
 
 //--- TriangleMesh ---

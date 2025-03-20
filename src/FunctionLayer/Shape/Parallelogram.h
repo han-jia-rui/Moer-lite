@@ -20,5 +20,5 @@ class Parallelogram : public Shape {
   public:
     int primitiveID_;
     Point3f base;
-    Vector3f edge0, edge1, norm;
+    Vector3f edge0, edge1, normal;
 };

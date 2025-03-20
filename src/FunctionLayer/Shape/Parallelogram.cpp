@@ -6,7 +6,7 @@ Parallelogram::Parallelogram(const Json &json, int primID)
       base(transform.toWorld(fetchRequired<Point3f>(json, "base"))),
       edge0(transform.toWorld(fetchRequired<Vector3f>(json, "edge0"))),
       edge1(transform.toWorld(fetchRequired<Vector3f>(json, "edge1"))) {
-    norm = cross(edge0, edge1);
+    normal = cross(edge0, edge1);
 
     Point3f vertices[4];
     vertices[0] = base;
@@ -24,7 +24,7 @@ bool Parallelogram::rayIntersectShape(Ray &ray, int &primID, float &u,
     const auto &origin = ray.origin;
     const auto &direction = ray.direction;
 
-    auto det = -dot(direction, norm);
+    auto det = -dot(direction, normal);
     if (nearZero(det)) // parallel
         return false;
 
@@ -52,19 +52,20 @@ void Parallelogram::fillIntersection(float distance, int primID, float u,
                                      Intersection &intersection) const {
     intersection.shape = this;
     intersection.distance = distance;
-    intersection.normal = normalize(cross(edge0, edge1));
+    intersection.normal = normalize(normal);
     intersection.texCoord = Vector2f{u, v};
     intersection.position = base + u * edge0 + v * edge1;
     intersection.dpdu = edge0, intersection.dpdv = edge1;
-    intersection.tangent = normalize(intersection.dpdu);
-    intersection.bitangent =
-        normalize(cross(intersection.tangent, intersection.normal));
+    const static auto tangent = normalize(edge0);
+    const static auto bitangent = normalize(cross(tangent, normal));
+    intersection.tangent = tangent;
+    intersection.bitangent = bitangent;
 }
 
 void Parallelogram::uniformSampleOnSurface(Vector2f sample,
                                            Intersection &result,
                                            float *pdf) const {
-    const static float area = cross(edge0, edge1).length();
+    const static auto area = normal.length();
     *pdf = 1.f / area;
     fillIntersection(.0f /*unused */, 0 /*unused*/, sample[0], sample[1],
                      result);
