@@ -56,16 +56,14 @@ void Parallelogram::fillIntersection(float distance, int primID, float u,
     intersection.texCoord = Vector2f{u, v};
     intersection.position = base + u * edge0 + v * edge1;
     intersection.dpdu = edge0, intersection.dpdv = edge1;
-    const static auto tangent = normalize(edge0);
-    const static auto bitangent = normalize(cross(tangent, normal));
-    intersection.tangent = tangent;
-    intersection.bitangent = bitangent;
+    intersection.tangent = normalize(edge0);
+    intersection.bitangent = normalize(cross(intersection.tangent, normal));
 }
 
 void Parallelogram::uniformSampleOnSurface(Vector2f sample,
                                            Intersection &result,
                                            float *pdf) const {
-    const static auto area = normal.length();
+    const auto area = normal.length();
     *pdf = 1.f / area;
     fillIntersection(.0f /*unused */, 0 /*unused*/, sample[0], sample[1],
                      result);

@@ -1,11 +1,8 @@
 #include "Matte.h"
 #include "./BxDF/Lambert.h"
-#include "./BxDF/Specular.h"
 #include <FunctionLayer/Texture/ConstantTexture.h>
-MatteMaterial::MatteMaterial() {
-    // default
-    albedo = std::make_shared<ConstantTexture<Spectrum>>(Spectrum(.5f));
-}
+MatteMaterial::MatteMaterial()
+    : albedo(std::make_shared<ConstantTexture<Spectrum>>(Spectrum(.5f))) {}
 
 MatteMaterial::MatteMaterial(const Json &json) : Material(json) {
     if (json["albedo"].is_object()) {

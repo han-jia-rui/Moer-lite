@@ -1,4 +1,5 @@
 #include "Shape.h"
+#include "ResourceLayer/Todo.h"
 #include <FunctionLayer/Material/Matte.h>
 #include <FunctionLayer/Material/Mirror.h>
 
@@ -29,7 +30,7 @@ Shape::Shape(const Json &json) {
 }
 
 void UserShapeBound(const RTCBoundsFunctionArguments *args) {
-    Shape *shape = static_cast<Shape *>(args->geometryUserPtr);
+    const Shape *shape = static_cast<Shape *>(args->geometryUserPtr);
     auto [pMin, pMax] = shape->getAABB();
     args->bounds_o->lower_x = pMin[0];
     args->bounds_o->lower_y = pMin[1];
@@ -41,11 +42,11 @@ void UserShapeBound(const RTCBoundsFunctionArguments *args) {
 }
 
 void UserShapeIntersect(const RTCIntersectFunctionNArguments *args) {
-    int *valid = args->valid;
+    const int *valid = args->valid;
     if (!valid[0])
         return;
 
-    Shape *shape = static_cast<Shape *>(args->geometryUserPtr);
+    const Shape *shape = static_cast<Shape *>(args->geometryUserPtr);
     RTCRayHit *rayhit = (RTCRayHit *)args->rayhit;
 
     Point3f origin{rayhit->ray.org_x, rayhit->ray.org_y, rayhit->ray.org_z};
@@ -64,9 +65,7 @@ void UserShapeIntersect(const RTCIntersectFunctionNArguments *args) {
     }
 }
 
-void UserShapeOcclude(const RTCOccludedFunctionNArguments *args) {
-    // TODO 暂不实现
-}
+void UserShapeOcclude(const RTCOccludedFunctionNArguments *args) { Todo(); }
 
 RTCGeometry Shape::getEmbreeGeometry(RTCDevice device) const {
     RTCGeometry geometry = rtcNewGeometry(device, RTC_GEOMETRY_TYPE_USER);

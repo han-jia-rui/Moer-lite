@@ -7,11 +7,11 @@
 #include <ResourceLayer/JsonUtil.h>
 class Material {
   public:
-    Material() {
-        // donothing
-    }
+    Material() = default;
 
-    Material(const Json &json) {
+    virtual ~Material() = default;
+
+    explicit Material(const Json &json) {
         if (json.contains("normalmap"))
             normalMap = std::make_shared<NormalTexture>(json["normalmap"]);
     }

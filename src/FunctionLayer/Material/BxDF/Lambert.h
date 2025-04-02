@@ -7,6 +7,8 @@ class LambertReflection : public BSDF {
                       const Vector3f &_bitangent, Spectrum _albedo)
         : BSDF(_normal, _tangent, _bitangent), albedo(_albedo) {}
 
+    virtual ~LambertReflection() = default;
+
     virtual Spectrum f(const Vector3f &wo, const Vector3f &wi) const override {
         Vector3f woLocal = toLocal(wo), wiLocal = toLocal(wi);
         // if (woLocal[1] <= .0f || wiLocal[1] <= .0f)

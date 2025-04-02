@@ -44,11 +44,6 @@ Matrix4f Transform::scalation(const Vector3f &scale) {
     return mat;
 }
 
-Transform::Transform() {
-    translate = invTranslate = rotate = invRotate = scale = invScale =
-        Matrix4f::identity();
-}
-
 Transform::Transform(const Matrix4f &_translation, const Matrix4f &_rotation,
                      const Matrix4f &_scalation)
     : translate(_translation), rotate(_rotation), scale(_scalation) {
@@ -58,17 +53,18 @@ Transform::Transform(const Matrix4f &_translation, const Matrix4f &_rotation,
         invScale.rows[i][i] = 1.f / scale.rows[i][i];
     }
     invRotate = rotate.transpose();
+    toWorldMat = translate * rotate * scale;
 }
 
 Vector3f Transform::toWorld(const Vector3f &vector) const {
     vecmat::vec4f v4{vector[0], vector[1], vector[2], 0};
-    v4 = translate * rotate * scale * v4;
+    v4 = toWorldMat * v4;
     return Vector3f{v4[0], v4[1], v4[2]};
 }
 
 Point3f Transform::toWorld(const Point3f &point) const {
     vecmat::vec4f v4{point[0], point[1], point[2], 1};
-    v4 = translate * rotate * scale * v4;
+    v4 = toWorldMat * v4;
     v4 /= v4[3];
     return Point3f{v4[0], v4[1], v4[2]};
 }

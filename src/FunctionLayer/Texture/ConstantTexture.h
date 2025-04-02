@@ -5,13 +5,13 @@
 template <typename TReturn>
 class ConstantTexture : public Texture<TReturn> {
   public:
-    ConstantTexture(const TReturn &_data) : data(_data) {}
+    explicit ConstantTexture(const TReturn &_data) : data(_data) {}
 
-    virtual TReturn evaluate(const Intersection &intersection) const override {
+    virtual TReturn evaluate(const Intersection &) const override {
         return data;
     }
 
-    virtual TReturn evaluate(const TextureCoord &texCoord) const override {
+    virtual TReturn evaluate(const TextureCoord &) const override {
         return data;
     }
 

@@ -16,6 +16,9 @@ struct TextureCoord {
 
 class TextureMapping {
   public:
+    TextureMapping() = default;
+    virtual ~TextureMapping() = default;
+
     virtual TextureCoord map(const Intersection &intersection) const = 0;
 };
 
@@ -29,10 +32,8 @@ class UVMapping : public TextureMapping {
 template <typename TReturn>
 class Texture {
   public:
-    Texture() {
-        //* 默认使用UV mapping
-        mapping = std::make_shared<UVMapping>();
-    }
+    Texture() : mapping(std::make_shared<UVMapping>()) {}
+    virtual ~Texture() = default;
 
     virtual TReturn evaluate(const Intersection &intersection) const = 0;
 

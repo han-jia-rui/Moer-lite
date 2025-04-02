@@ -1,6 +1,7 @@
 #pragma once
 #include "FunctionLayer/Acceleration/AABB.h"
 #include "Geometry.h"
+
 //* 三维空间中的旋转、缩放、平移操作均可以用一个4x4的矩阵进行描述
 //* Transform对象描述了如何对一个物体在三维空间上进行变换
 //* Transform是对4维方阵的高层次抽象，只关心旋转、缩放、平移操作
@@ -14,7 +15,7 @@ struct Transform {
     static Matrix4f scalation(const Vector3f &scale);
 
     //* 默认构造函数，所有矩阵都是4x4的单位矩阵
-    Transform();
+    Transform() = default;
 
     Transform(const Matrix4f &_translation, const Matrix4f &_rotation,
               const Matrix4f &_scalation);
@@ -27,16 +28,16 @@ struct Transform {
     //* 当对C应用该Transform后，toWorld返回point发生变换后的世界坐标系表达
     Point3f toWorld(const Point3f &point) const;
 
-    //*
     //* 对包围盒进行变换
     AABB toWorld(const AABB &box) const;
 
     Ray inverseRay(const Ray &ray) const;
 
   public:
-    Matrix4f translate, invTranslate;
-    Matrix4f rotate, invRotate;
-    Matrix4f scale, invScale;
+    Matrix4f toWorldMat = Matrix4f::identity();
+    Matrix4f translate = toWorldMat, invTranslate = toWorldMat;
+    Matrix4f rotate = toWorldMat, invRotate = toWorldMat;
+    Matrix4f scale = toWorldMat, invScale = toWorldMat;
 };
 
 //* 所有在3维空间中可进行旋转、缩放、平移操作的对象都需要继承该类，并实现所有接口

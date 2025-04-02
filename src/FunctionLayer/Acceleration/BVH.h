@@ -2,7 +2,7 @@
 #include "Acceleration.h"
 
 struct BVHNode {
-    static constexpr int MaxLeafSize = 1;
+    static constexpr int MaxLeafSize = 2;
     static constexpr int MaxChildNum = 2;
     std::unique_ptr<BVHNode> children[MaxChildNum];
     int l_idx, r_idx;
