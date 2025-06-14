@@ -16,7 +16,7 @@ Spectrum ImageTexture::evaluate(const Intersection &intersection) const {
 
 Spectrum ImageTexture::evaluate(const TextureCoord &texCoord) const {
     return Spectrum{
-        mipmap->lookUp(texCoord.coord, texCoord.duvdx, texCoord.duvdy)};
+        mipmap->lookUp(texCoord.coord, texCoord.duv_dx, texCoord.duv_dy)};
 }
 
 REGISTER_CLASS(ImageTexture, "imageTex")

@@ -23,7 +23,6 @@ class BSDF {
     virtual BSDFSampleResult sample(const Vector3f &wo,
                                     const Vector2f &sample) const = 0;
 
-  public:
     Vector3f normal, tangent, bitangent; // 构成局部坐标系
   protected:
     Vector3f toLocal(Vector3f world) const {

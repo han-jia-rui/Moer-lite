@@ -20,8 +20,8 @@ class Material {
     computeBSDF(const Intersection &intersection) const = 0;
 
     void computeShadingGeometry(const Intersection &intersection,
-                                Vector3f *normal, Vector3f *tangent,
-                                Vector3f *bitangent) const;
+                                Vector3f &normal, Vector3f &tangent,
+                                Vector3f &bitangent) const;
 
   protected:
     std::shared_ptr<NormalTexture> normalMap;

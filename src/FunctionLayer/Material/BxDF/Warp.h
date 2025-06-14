@@ -14,7 +14,7 @@ inline float squareToUniformHemispherePdf(Vector3f v) {
 }
 
 inline Vector3f squareToCosineHemisphere(Vector2f sample) {
-    float phi = 2 * M_PI * sample[0], theta = std::acos(std::sqrt(sample[1]));
+    float phi = 2 * M_PI * sample[0], theta = std::acos(sample[1]);
     return Vector3f{std::sin(theta) * std::sin(phi), std::cos(theta),
                     std::sin(theta) * std::cos(phi)};
 }

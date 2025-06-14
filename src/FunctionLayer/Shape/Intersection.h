@@ -66,22 +66,22 @@ inline void computeRayDifferentials(Intersection &intersection,
             float By[2] = {dpdy[dim[0]], dpdy[dim[1]]};
 
             auto solveLinearSystem2x2 = [](const float A[2][2],
-                                           const float B[2], float *x0,
-                                           float *x1) {
+                                           const float B[2], float &x0,
+                                           float &x1) -> bool {
                 float det = A[0][0] * A[1][1] - A[0][1] * A[1][0];
                 if (std::abs(det) < 1e-10f)
                     return false;
-                *x0 = (A[1][1] * B[0] - A[0][1] * B[1]) / det;
-                *x1 = (A[0][0] * B[1] - A[1][0] * B[0]) / det;
-                if (std::isnan(*x0) || std::isnan(*x1))
+                x0 = (A[1][1] * B[0] - A[0][1] * B[1]) / det;
+                x1 = (A[0][0] * B[1] - A[1][0] * B[0]) / det;
+                if (std::isnan(x0) || std::isnan(x1))
                     return false;
                 return true;
             };
 
             float dudx, dvdx, dudy, dvdy;
-            if (!solveLinearSystem2x2(A, Bx, &dudx, &dvdx))
+            if (!solveLinearSystem2x2(A, Bx, dudx, dvdx))
                 dudx = dvdx = .0f;
-            if (!solveLinearSystem2x2(A, Bx, &dudy, &dvdy))
+            if (!solveLinearSystem2x2(A, Bx, dudy, dvdy))
                 dudy = dvdy = .0f;
 
             intersection.dudx = dudx;

@@ -13,7 +13,7 @@ debug:
     @cmake -B build/debug -S . -DCMAKE_BUILD_TYPE=Debug
     @cmake --build build/debug --parallel 8
 
-test target: release
+test target: debug
     {{cmd}} {{target}}
 
 valgrind target: debug

@@ -2,6 +2,7 @@
 
 #include "Texture.h"
 #include <CoreLayer/ColorSpace/Spectrum.h>
+
 template <typename TReturn>
 class ConstantTexture : public Texture<TReturn> {
   public:

@@ -24,14 +24,13 @@ Spectrum WhittedIntegrator::li(Ray &ray, const Scene &scene,
 
         auto bsdfSampleResult = bsdf->sample(-ray.direction, sampler->next2D());
 
-        // If the surface is specular, spwan the ray
         if (bsdfSampleResult.type == BSDFType::Specular) {
+            // If the surface is specular, spawn the ray
             ray = Ray(its.position, bsdfSampleResult.wi);
             beta *= bsdfSampleResult.weight;
             continue;
-        }
-        // If the surface is not specular, sample the light
-        else {
+        } else {
+            // If the surface is not specular, sample the light
             // First, sample infinite light
             for (auto light : scene.infiniteLights) {
                 auto lightSampleResult = light->sample(its, sampler->next2D());

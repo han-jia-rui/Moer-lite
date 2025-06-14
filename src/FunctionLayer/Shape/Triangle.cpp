@@ -2,12 +2,12 @@
 #include "CoreLayer/Math/Geometry.h"
 #include <FunctionLayer/Acceleration/Linear.h>
 
-//--- Triangle ---
+// ── Triangle ────────────────────────────────────────────────────────
 
 Triangle::Triangle(int geomID, Point3f v0, Point3f v1, Point3f v2, int primID)
     : primitiveID_(primID), base(v0) {
-    edge0 = v1 - base;
-    edge1 = v2 - base;
+    edge0 = v1 - v0;
+    edge1 = v2 - v1;
     norm = cross(edge0, edge1);
     boundingBox.Expand(base);
     boundingBox.Expand(v1);
@@ -49,11 +49,6 @@ bool Triangle::rayIntersectShape(Ray &ray, int &primID, float &u,
     v = tmp_v;
 
     return true;
-}
-
-void Triangle::fillIntersection(float distance, int primID, float u, float v,
-                                Intersection &intersection) const {
-    Todo();
 }
 
 //--- TriangleMesh ---

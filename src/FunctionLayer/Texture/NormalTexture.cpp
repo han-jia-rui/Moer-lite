@@ -7,11 +7,11 @@ NormalTexture::NormalTexture(const Json &json) {
     size = normalmap->size;
 }
 
-// TODO 目前法线贴图没有任何过滤
+// TODO: 目前法线贴图没有任何过滤
 // 返回TBN坐标系下法线的表示
 Vector3f NormalTexture::evaluate(const Intersection &intersection) const {
     TextureCoord texCoord = mapping->map(intersection);
-    return evaluate(texCoord);
+    return this->evaluate(texCoord);
 }
 
 Vector3f NormalTexture::evaluate(const TextureCoord &texCoord) const {

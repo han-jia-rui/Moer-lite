@@ -21,7 +21,9 @@ class Triangle : public Shape {
                                    float &v) const override;
 
     virtual void fillIntersection(float distance, int primID, float u, float v,
-                                  Intersection &intersection) const override;
+                                  Intersection &intersection) const override {
+        Todo();
+    };
 
     virtual void uniformSampleOnSurface(Vector2f sample, Intersection &result,
                                         float *pdf) const override {
