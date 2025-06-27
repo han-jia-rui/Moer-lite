@@ -21,13 +21,13 @@ class Integrator {
 inline float convertPDF(const LightSampleResult &result,
                         const Intersection &intersection) {
     float pdf = result.pdf;
-    float disance = result.distance;
+    float distance = result.distance;
     switch (result.type) {
     case LightType::SpotLight:
-        pdf *= disance * disance;
+        pdf *= distance * distance;
         break;
     case LightType::AreaLight:
-        pdf *= disance * disance;
+        pdf *= distance * distance;
         pdf /= std::abs(dot(result.normal, result.direction));
         break;
     //* 环境光的pdf转换在采样时已经完成

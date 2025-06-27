@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 3.15)
 
 set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2 -fopenmp")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 project(Moer-lite LANGUAGES CXX)
 
@@ -24,43 +24,12 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/target/bin)
 
 add_subdirectory(./externals)
 
-add_executable(Moer
-  src/main.cpp
+file(GLOB_RECURSE MOER_SOURCES
+  src/*.cpp
+  src/*.h
+)
 
-  src/CoreLayer/Math/Transform.cpp
-
-  src/FunctionLayer/Acceleration/AABB.cpp
-  src/FunctionLayer/Acceleration/Acceleration.cpp
-  src/FunctionLayer/Acceleration/EmbreeBVH.cpp
-  src/FunctionLayer/Acceleration/Linear.cpp
-  src/FunctionLayer/Acceleration/Octree.cpp
-
-  src/FunctionLayer/Integrator/NormalIntegrator.cpp
-  src/FunctionLayer/Integrator/DirectIntegrator.cpp
-  src/FunctionLayer/Integrator/WhittedIntegrator.cpp
-  src/FunctionLayer/Camera/Camera.cpp
-  src/FunctionLayer/Camera/Pinhole.cpp
-  src/FunctionLayer/Scene/Scene.cpp
-  src/FunctionLayer/Light/SpotLight.cpp
-  src/FunctionLayer/Light/AreaLight.cpp
-  src/FunctionLayer/Light/EnvironmentLight.cpp
-  src/FunctionLayer/Shape/Shape.cpp
-  src/FunctionLayer/Shape/Triangle.cpp
-  src/FunctionLayer/Shape/Cube.cpp
-  src/FunctionLayer/Shape/Sphere.cpp
-  src/FunctionLayer/Shape/Parallelogram.cpp
-  src/FunctionLayer/Texture/NormalTexture.cpp
-  src/FunctionLayer/Texture/ImageTexture.cpp
-  src/FunctionLayer/Texture/Texture.cpp
-  src/FunctionLayer/Texture/Mipmap.cpp
-  src/FunctionLayer/Material/Matte.cpp
-  src/FunctionLayer/Material/Mirror.cpp
-  src/FunctionLayer/Material/Material.cpp
-  src/FunctionLayer/Sampler/IndependentSampler.cpp
-  src/ResourceLayer/Image.cpp
-  src/ResourceLayer/Mesh.cpp
-  src/ResourceLayer/FileUtil.cpp
-        src/FunctionLayer/Shape/Disk.cpp src/FunctionLayer/Shape/Disk.h src/FunctionLayer/Shape/Cone.cpp src/FunctionLayer/Shape/Cone.h src/FunctionLayer/Shape/Cylinder.cpp src/FunctionLayer/Shape/Cylinder.h src/FunctionLayer/Integrator/UVIntegrator.cpp src/FunctionLayer/Integrator/UVIntegrator.h src/FunctionLayer/Acceleration/BVH.cpp src/FunctionLayer/Acceleration/BVH.h)
+add_executable(Moer ${MOER_SOURCES})
 
 target_include_directories(Moer PUBLIC ./externals)
 target_include_directories(Moer PUBLIC ./src)

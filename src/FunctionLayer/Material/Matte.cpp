@@ -1,6 +1,7 @@
 #include "Matte.h"
-#include "./BxDF/Lambert.h"
+
 #include <FunctionLayer/Texture/ConstantTexture.h>
+
 MatteMaterial::MatteMaterial()
     : albedo(std::make_shared<ConstantTexture<Spectrum>>(Spectrum(.5f))) {}
 
