@@ -11,7 +11,7 @@ if(MSVC)
     add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
     add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
     add_definitions(-D_USE_MATH_DEFINES)
-endif(MSVC)
+endif()
 
 if(WIN32)
     add_definitions(-DUNICODE -D_UNICODE)
@@ -58,7 +58,8 @@ target_link_directories(Moer PUBLIC ${PROJECT_SOURCE_DIR}/target/lib)
 add_custom_command(TARGET Moer POST_BUILD
   DEPENDS ${LIBS_PATH}/embree3.dll
   COMMAND ${CMAKE_COMMAND} -E copy_if_different
-  ${EMBREE_DLL} $<TARGET_FILE_DIR:Moer>)
+  ${EMBREE_DLL} $<TARGET_FILE_DIR:Moer>
+)
 
 target_link_libraries(Moer PUBLIC embree3)
 target_link_libraries(Moer PUBLIC tinyobjloader)

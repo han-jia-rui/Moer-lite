@@ -1,5 +1,6 @@
 #include "Matte.h"
 
+#include <FunctionLayer/BxDF/Lambert.h>
 #include <FunctionLayer/Texture/ConstantTexture.h>
 
 MatteMaterial::MatteMaterial()
@@ -20,12 +21,12 @@ MatteMaterial::MatteMaterial(const Json &json) : Material(json) {
 }
 
 std::shared_ptr<BSDF>
-MatteMaterial::computeBSDF(const Intersection &intersection) const {
+MatteMaterial::createBSDF(const Intersection &intersection) const {
     Vector3f normal, tangent, bitangent;
     computeShadingGeometry(intersection, normal, tangent, bitangent);
 
     Spectrum s = albedo->evaluate(intersection);
-    return std::make_shared<LambertReflection>(normal, tangent, bitangent, s);
+    return std::make_shared<LambertBSDF>(normal, tangent, bitangent, s);
 }
 
 REGISTER_CLASS(MatteMaterial, "matte")

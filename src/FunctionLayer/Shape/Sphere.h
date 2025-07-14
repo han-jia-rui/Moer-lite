@@ -15,7 +15,6 @@ class Sphere : public Shape {
 
     virtual void uniformSampleOnSurface(Vector2f sample, Intersection &result,
                                         float *pdf) const override {
-        // TODO finish this
         return;
     }
 

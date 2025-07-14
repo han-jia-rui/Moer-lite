@@ -1,5 +1,8 @@
 #pragma once
+#include "CoreLayer/Math/Geometry.h"
 #include <CoreLayer/Math/Math.h>
+
+class Material;
 
 struct Ray {
     Ray() = delete;

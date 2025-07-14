@@ -38,9 +38,10 @@ int main(int argc, char **argv) {
     std::ifstream fstm(sceneJsonPath);
     Json json = Json::parse(fstm);
     auto camera = Factory::construct_class<Camera>(json["camera"]);
-    auto scene = std::make_shared<Scene>(json["scene"]);
+    auto scene = Scene(json["scene"]);
     auto integrator = Factory::construct_class<Integrator>(json["integrator"]);
     auto sampler = Factory::construct_class<Sampler>(json["sampler"]);
+
     auto spp = sampler->xSamples * sampler->ySamples;
     auto width = camera->film->size[0], height = camera->film->size[1];
 
@@ -51,10 +52,11 @@ int main(int argc, char **argv) {
         for (int x = 0; x < width; ++x) {
             Vector2f NDC{(float)x / width, (float)y / height};
             Spectrum li{.0f};
+            // std::cout << "Rendering pixel (" << x << ", " << y << ")...\n";
             for (int i = 0; i < spp; ++i) {
                 Ray ray = camera->sampleRayDifferentials(
                     CameraSample{sampler->next2D(), Vector2f{}, 0}, NDC);
-                li += integrator->li(ray, *scene, sampler);
+                li += integrator->li(ray, scene, sampler);
             }
             camera->film->deposit({x, y}, li / spp);
         }

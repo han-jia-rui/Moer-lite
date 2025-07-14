@@ -27,7 +27,7 @@ DirectIntegratorSampleLight::li(Ray &ray, const Scene &scene,
         auto occlude = scene.rayIntersect(shadowRay);
         if (!occlude.has_value()) {
             auto material = intersection.shape->material;
-            auto bsdf = material->computeBSDF(intersection);
+            auto bsdf = material->createBSDF(intersection);
             Spectrum f = bsdf->f(-ray.direction, shadowRay.direction);
             float pdf = convertPDF(res, intersection);
             spectrum += res.energy * f / pdf;
@@ -48,7 +48,7 @@ DirectIntegratorSampleLight::li(Ray &ray, const Scene &scene,
         auto occlude = scene.rayIntersect(shadowRay);
         if (!occlude.has_value()) {
             auto material = intersection.shape->material;
-            auto bsdf = material->computeBSDF(intersection);
+            auto bsdf = material->createBSDF(intersection);
             Spectrum f = bsdf->f(-ray.direction, shadowRay.direction);
             lightSampleResult.pdf *= pdfLight;
             float pdf = convertPDF(lightSampleResult, intersection);
@@ -80,7 +80,7 @@ DirectIntegratorSampleBSDF ::li(Ray &ray, const Scene &scene,
 
     //* 采样BSDF,选择一个入射方向
     auto material = intersection.shape->material;
-    auto bsdf = material->computeBSDF(intersection);
+    auto bsdf = material->createBSDF(intersection);
     auto bsdfSampleResult = bsdf->sample(-ray.direction, sampler->next2D());
 
     //* 该入射方向上如果有光源，那么将得到一条有贡献的、长度为1的光路

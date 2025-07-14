@@ -1,12 +1,11 @@
 #include "Mirror.h"
-
-MirrorMaterial::MirrorMaterial(const Json &json) : Material(json) {}
+#include <FunctionLayer/BxDF/Specular.h>
 
 std::shared_ptr<BSDF>
-MirrorMaterial::computeBSDF(const Intersection &intersection) const {
+MirrorMaterial::createBSDF(const Intersection &intersection) const {
     Vector3f normal, tangent, bitangent;
     computeShadingGeometry(intersection, normal, tangent, bitangent);
-    return std::make_shared<SpecularReflection>(normal, tangent, bitangent);
+    return std::make_shared<SpecularBSDF>(normal, tangent, bitangent);
 }
 
 REGISTER_CLASS(MirrorMaterial, "mirror")

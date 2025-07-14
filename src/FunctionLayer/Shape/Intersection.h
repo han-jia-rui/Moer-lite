@@ -5,8 +5,10 @@
 class Shape;
 
 //* Ray与Shape交点处的信息
+// NOTE: We can store the Ray ptr in the Intersection struct, and the distance
+// member are unused.
 struct Intersection {
-    float distance;              // 从光线起点到交点的距离
+    float distance;              // 从光线起点到交点的距离 (Unused)
     Point3f position;            // 交点的位置
     Vector3f normal;             // 交点处的法线
     Vector3f tangent, bitangent; // 交点处的切线和副切线
@@ -17,6 +19,9 @@ struct Intersection {
     //* 光线微分
     float dudx, dvdx, dudy, dvdy;
     Vector3f dpdx, dpdy;
+
+    //* 着色上下文信息 (替代 ShadingContext)
+    Vector3f wi;                 // 入射方向
 };
 
 inline void computeRayDifferentials(Intersection &intersection,
@@ -81,7 +86,7 @@ inline void computeRayDifferentials(Intersection &intersection,
             float dudx, dvdx, dudy, dvdy;
             if (!solveLinearSystem2x2(A, Bx, dudx, dvdx))
                 dudx = dvdx = .0f;
-            if (!solveLinearSystem2x2(A, Bx, dudy, dvdy))
+            if (!solveLinearSystem2x2(A, By, dudy, dvdy))
                 dudy = dvdy = .0f;
 
             intersection.dudx = dudx;

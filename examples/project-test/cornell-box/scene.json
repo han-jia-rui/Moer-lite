@@ -227,8 +227,13 @@
                     ]
                 },
                 "material": {
-                    "type": "mirror",
+                    "type": "matte",
                     "albedo": [
+                        0.3,
+                        0.3,
+                        0.3
+                    ],
+                    "absorption": [
                         0.3,
                         0.3,
                         0.3
@@ -240,9 +245,9 @@
             {
                 "type": "areaLight",
                 "energy": [
-                    30,
-                    30,
-                    30
+                    50,
+                    50,
+                    50
                 ],
                 "shape": {
                     "type": "parallelogram",

@@ -70,6 +70,15 @@ class Vector3f {
     float operator[](int i) const { return xyz[i]; }
     float &operator[](int i) { return xyz[i]; }
 
+    float x() const { return xyz[0]; }
+    float &x() { return xyz[0]; }
+
+    float y() const { return xyz[1]; }
+    float &y() { return xyz[1]; }
+
+    float z() const { return xyz[2]; }
+    float &z() { return xyz[2]; }
+
     //* 打印向量的值
     void debugPrint() const { xyz.debug_print(); }
 

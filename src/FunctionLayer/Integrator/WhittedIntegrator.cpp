@@ -3,32 +3,32 @@
 
 Spectrum WhittedIntegrator::li(Ray &ray, const Scene &scene,
                                std::shared_ptr<Sampler> sampler) const {
-    Spectrum spectrum(.0f), beta(1.0f);
+    Spectrum radiance(.0f), weight(1.0f);
     while (true) {
         auto itsOpt = scene.rayIntersect(ray);
 
         // escape the scene
         if (!itsOpt.has_value()) {
             for (auto light : scene.infiniteLights) {
-                spectrum += beta * light->evaluateEmission(ray);
+                radiance += weight * light->evaluateEmission(ray);
             }
             break;
         }
 
         Intersection intersection = itsOpt.value();
         if (auto light = intersection.shape->light; light) {
-            spectrum +=
-                beta * light->evaluateEmission(intersection, -ray.direction);
+            radiance +=
+                weight * light->evaluateEmission(intersection, -ray.direction);
         }
         computeRayDifferentials(intersection, ray);
-        auto bsdf = intersection.shape->material->computeBSDF(intersection);
+        auto bsdf = intersection.shape->material->createBSDF(intersection);
 
         auto bsdfSampleResult = bsdf->sample(-ray.direction, sampler->next2D());
 
         if (bsdfSampleResult.type == BSDFType::Specular) {
             // If the surface is specular, spawn the ray
             ray = Ray(intersection.position, bsdfSampleResult.wi);
-            beta *= bsdfSampleResult.weight;
+            weight *= bsdfSampleResult.weight;
             continue;
         } else {
             // If the surface is not specular, sample the light
@@ -43,7 +43,7 @@ Spectrum WhittedIntegrator::li(Ray &ray, const Scene &scene,
                     !occlude.has_value()) {
                     Spectrum f = bsdf->f(-ray.direction, shadowRay.direction);
                     float pdf = convertPDF(lightSampleResult, intersection);
-                    spectrum += beta * lightSampleResult.energy * f / pdf;
+                    radiance += weight * lightSampleResult.energy * f / pdf;
                 }
             }
 
@@ -62,14 +62,14 @@ Spectrum WhittedIntegrator::li(Ray &ray, const Scene &scene,
                     Spectrum f = bsdf->f(-ray.direction, shadowRay.direction);
                     lightSampleResult.pdf *= pdfLight;
                     float pdf = convertPDF(lightSampleResult, intersection);
-                    spectrum += beta * lightSampleResult.energy * f / pdf;
+                    radiance += weight * lightSampleResult.energy * f / pdf;
                 }
             }
             break;
         }
     };
 
-    return spectrum;
+    return radiance;
 }
 
 REGISTER_CLASS(WhittedIntegrator, "whitted")

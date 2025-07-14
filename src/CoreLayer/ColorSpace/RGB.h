@@ -66,6 +66,14 @@ class SpectrumRGB {
 
     float &operator[](int i) { return rgb[i]; }
 
+    float r() const { return rgb[0]; }
+    float g() const { return rgb[1]; }
+    float b() const { return rgb[2]; }
+    
+    float maxComponent() const {
+        return std::max({rgb[0], rgb[1], rgb[2]});
+    }
+
     bool isZero() const { return rgb.isZero(); }
 
     void debugPrint() const {
